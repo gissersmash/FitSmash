@@ -1,7 +1,11 @@
-export default function HealthTable({ entries, onEdit, onDelete }) {
+import React from "react";
+
+export default function HealthTable({ entries, onDelete }) {
+  if (!entries || entries.length === 0) return <p>Aucune entrée pour le moment.</p>;
+
   return (
-    <table className="table table-bordered table-hover">
-      <thead className="table-success">
+    <table className="table table-bordered">
+      <thead>
         <tr>
           <th>Date</th>
           <th>Poids (kg)</th>
@@ -11,18 +15,18 @@ export default function HealthTable({ entries, onEdit, onDelete }) {
         </tr>
       </thead>
       <tbody>
-        {entries.map(e => (
-          <tr key={e.id}>
-            <td>{e.created_at}</td>
-            <td>{e.weight}</td>
-            <td>{e.sleep_hours}</td>
-            <td>{e.activity_minutes}</td>
+        {entries.map(entry => (
+          <tr key={entry.id}>
+            <td>{new Date(entry.date).toLocaleDateString()}</td>
+            <td>{entry.weight}</td>
+            <td>{entry.sleep}</td>
+            <td>{entry.activity}</td>
             <td>
-              <button className="btn btn-outline-success btn-sm me-2" onClick={() => onEdit(e)}>
-                <i className="bi bi-pencil-square"></i>
-              </button>
-              <button className="btn btn-outline-danger btn-sm" onClick={() => onDelete(e.id)}>
-                <i className="bi bi-trash"></i>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => onDelete(entry.id)}
+              >
+                Supprimer
               </button>
             </td>
           </tr>

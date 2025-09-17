@@ -1,10 +1,7 @@
 import API from "./api";
 
-// Ajouter une entrée santé
-export const addHealthEntry = (data) => API.post("/health", data);
-
-// Récupérer toutes les entrées santé
+// Entrées santé
 export const getHealthEntries = () => API.get("/health");
-
-// Supprimer une entrée santé
+export const addHealthEntry = (data) => API.post("/health", data);
 export const deleteHealthEntry = (id) => API.delete(`/health/${id}`);
+export const getStats = (period) => API.get(`/health/stats/${period}`);
