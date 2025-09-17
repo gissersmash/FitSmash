@@ -6,7 +6,6 @@ export const Goal = sequelize.define("Goal", {
   user_id: { type: DataTypes.INTEGER, allowNull: false },
   type: { type: DataTypes.STRING, allowNull: false },
   value: { type: DataTypes.FLOAT, allowNull: false },
-  pourcentage: { type: DataTypes.FLOAT, allowNull: true },
 }, {
   tableName: "goals",
   timestamps: false

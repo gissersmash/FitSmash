@@ -21,7 +21,7 @@ app.options(/.*/, cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api", foodEntriesRouter);
+app.use("/api/food-entries", foodEntriesRouter);
 
 // Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));

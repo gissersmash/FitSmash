@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { auth } from "../middleware/auth.js";
+import { auth } from "../middlewares/auth.js";
 import { addFood, listFoods, deleteFood, updateFood } from "../controllers/food.controller.js";
 const router = Router();
 

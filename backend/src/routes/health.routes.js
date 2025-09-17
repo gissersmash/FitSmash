@@ -1,19 +1,14 @@
-import { Router } from "express";
-import { auth } from "../middleware/auth.js";
-const router = Router();
+// backend/src/routes/health.routes.js
+import express from "express";
+import auth from "../middlewares/auth.js";
+import { addHealthEntry, listHealthEntries } from "../controllers/health.controller.js";
 
-import { createEntry, listEntries, updateEntry, deleteEntry } from "../controllers/health.controller.js";
+const router = express.Router();
 
-// PUT /api/health/:id → Modifier une entrée santé
-router.put("/:id", auth, updateEntry);
+// Ajouter une entrée santé
+router.post("/", auth, addHealthEntry);
 
-// DELETE /api/health/:id → Supprimer une entrée santé
-router.delete("/:id", auth, deleteEntry);
-
-// POST /api/health → Ajouter une entrée santé
-router.post("/", auth, createEntry);
-
-// GET /api/health → Récupérer les entrées santé
-router.get("/", auth, listEntries);
+// Récupérer toutes les entrées santé
+router.get("/", auth, listHealthEntries);
 
 export default router;

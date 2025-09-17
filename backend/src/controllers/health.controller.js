@@ -1,59 +1,35 @@
-// Modifier une entrée santé
-export async function updateEntry(req, res) {
-  try {
-    const { id } = req.params;
-    const { weight, sleep_hours, activity_minutes, created_at } = req.body;
-    const entry = await HealthData.findOne({ where: { id, user_id: req.user.id } });
-    if (!entry) return res.status(404).json({ message: "Entrée non trouvée" });
-    await entry.update({ weight, sleep_hours, activity_minutes, created_at });
-    return res.json(entry);
-  } catch (e) {
-    return res.status(400).json({ message: e.message });
-  }
-}
+// backend/src/controllers/health.controller.js
+import HealthEntry from "../models/HealthEntry.js";
 
-// Supprimer une entrée santé
-export async function deleteEntry(req, res) {
+// ➕ Ajouter une entrée santé
+export async function addHealthEntry(req, res) {
   try {
-    const { id } = req.params;
-    const entry = await HealthData.findOne({ where: { id, user_id: req.user.id } });
-    if (!entry) return res.status(404).json({ message: "Entrée non trouvée" });
-    await entry.destroy();
-    return res.json({ message: "Entrée supprimée" });
-  } catch (e) {
-    return res.status(400).json({ message: e.message });
-  }
-}
-import { HealthData } from "../models/HealthData.js";
+    const { poids, sommeil, activite, date } = req.body;
 
-// Ajouter une entrée santé
-export async function createEntry(req, res) {
-  try {
-    const { weight, sleep_hours, activity_minutes, created_at } = req.body;
-
-    const entry = await HealthData.create({
+    const entry = await HealthEntry.create({
       user_id: req.user.id,
-      weight,
-      sleep_hours,
-      activity_minutes,
-      created_at
+      poids,
+      sommeil,
+      activite,
+      date: date || new Date()
     });
 
-    return res.status(201).json(entry);
-  } catch (e) {
-    return res.status(400).json({ message: e.message });
+    res.status(201).json(entry);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
-// Lister toutes les entrées santé de l'utilisateur
-export async function listEntries(req, res) {
+// 📋 Récupérer toutes les entrées santé de l’utilisateur
+export async function listHealthEntries(req, res) {
   try {
-    const entries = await HealthData.findAll({
+    const entries = await HealthEntry.findAll({
       where: { user_id: req.user.id },
-      order: [["created_at", "DESC"]]
+      order: [["date", "ASC"]],
     });
-    return res.json(entries);
-  } catch (e) {
-    return res.status(400).json({ message: e.message });
+
+    res.json(entries);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }

@@ -40,6 +40,9 @@ export default function TableauSuivi() {
     window.location.href = '/login';
     return null;
   }
+  // Debug : voir si le composant est bien importé
+  console.log("HealthTable:", HealthTable);
+  
   return (
     <div style={{ minHeight: '100vh', background: '#FFFBEA' }}>
       <Sidebar />

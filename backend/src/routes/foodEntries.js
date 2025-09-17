@@ -1,11 +1,12 @@
 import express from "express";
-import auth from "../middleware/auth.js";
+import auth from "../middlewares/auth.js";
 import FoodEntry from "../models/FoodEntry.js";
+import { sequelize } from "../config/db.js";
 
 const router = express.Router();
 
 // Enregistrement des aliments pour l'utilisateur
-router.post('/food-entries', auth, async (req, res) => {
+router.post('/', auth, async (req, res) => {
   const userId = req.user.id;
   const entries = req.body.entries || [];
   try {
@@ -21,10 +22,15 @@ router.post('/food-entries', auth, async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+
 });
+sequelize.sync({ alter: true })
+  .then(() => console.log("✅ Tables synchronisées"))
+  .catch(err => console.error("❌ Erreur sync:", err));
+
 
 // Récupération des aliments pour l'utilisateur
-router.get('/food-entries', auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
   const userId = req.user.id;
   try {
     const entries = await FoodEntry.findAll({ where: { user_id: userId } });

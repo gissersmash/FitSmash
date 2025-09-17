@@ -11,7 +11,7 @@ export async function updateFood(req, res) {
     res.status(400).json({ message: err.message });
   }
 }
-import { Food } from "../models/Food.js";
+import FoodEntry from "../models/FoodEntry.js";
 
 // Ajouter un aliment
 export async function addFood(req, res) {
