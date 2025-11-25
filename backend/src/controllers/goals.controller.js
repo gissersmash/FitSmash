@@ -7,7 +7,9 @@ export async function saveNutritionGoals(req, res) {
     const { goals } = req.body;
 
     if (!Array.isArray(goals)) {
-      return res.status(400).json({ message: "Le corps de la requête doit contenir un tableau goals" });
+      return res
+        .status(400)
+        .json({ message: "Le corps de la requête doit contenir un tableau goals" });
     }
 
     // Supprime les anciens objectifs de l'utilisateur
@@ -15,20 +17,23 @@ export async function saveNutritionGoals(req, res) {
 
     // Crée les nouveaux objectifs
     const created = await Promise.all(
-      goals.map(goal =>
+      goals.map((goal) =>
         Goal.create({
           user_id: req.user.id,
           type: goal.type,
-          value: goal.objectif // correspond au frontend
+          value: goal.objectif, // correspond au frontend
+          pourcentage: goal.pourcentage || null, // 👈 ajoute aussi le pourcentage si besoin
         })
       )
     );
 
-    res.status(201).json(created);
+    // Retourne bien un objet { goals: [...] }
+    res.status(201).json({ goals: created });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
+
 
 // Récupérer tous les objectifs d'un utilisateur
 export async function listGoals(req, res) {

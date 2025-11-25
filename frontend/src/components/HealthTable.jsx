@@ -11,6 +11,7 @@ export default function HealthTable({ entries, onDelete }) {
           <th>Poids (kg)</th>
           <th>Sommeil (h)</th>
           <th>Activité (min)</th>
+          <th>Type d'activité</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -21,6 +22,7 @@ export default function HealthTable({ entries, onDelete }) {
             <td>{entry.weight}</td>
             <td>{entry.sleep}</td>
             <td>{entry.activity}</td>
+            <td>{entry.activity_type || '-'}</td>
             <td>
               <button
                 className="btn btn-danger btn-sm"

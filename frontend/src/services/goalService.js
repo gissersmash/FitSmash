@@ -1,14 +1,21 @@
-import API from "../services/api";
+// frontend/src/services/goalService.js
+import axios from "axios";
+import { setToken } from "./api";
 
-export const saveNutritionGoals = (goals) => {
-  // Transforme les objectifs pour correspondre au format attendu
-  const formattedGoals = goals.map(obj => ({
-    type: obj.type,
-    value: obj.objectif
-  }));
-  return API.post("/goals", { goals: formattedGoals });
-};
+const API_URL = "http://localhost:4000/api/goals";
 
-export const getNutritionGoals = () => {
-  return API.get("/goals");
-};
+// Enregistrer des objectifs
+export async function saveNutritionGoals(payload) {
+  const res = await axios.post(API_URL, payload, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+  });
+  return res.data.goals || [];
+}
+
+// Récupérer les objectifs
+export async function getNutritionGoals() {
+  const res = await axios.get(API_URL, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+  });
+  return res.data.goals || [];
+}

@@ -6,7 +6,7 @@ import { setToken } from "../services/api";
 
 export default function TableauSuivi() {
   const [entries, setEntries] = useState([]);
-  const [newEntry, setNewEntry] = useState({ weight: "", sleep_hours: "", activity_minutes: "" });
+  const [newEntry, setNewEntry] = useState({ weight: "", sleep_hours: "", activity_minutes: "", activity_type: "" });
   const [period, setPeriod] = useState("week");
   const [stats, setStats] = useState([]);
 
@@ -52,9 +52,10 @@ export default function TableauSuivi() {
         weight: parseFloat(newEntry.weight),
         sleep: parseFloat(newEntry.sleep_hours),
         activity: parseFloat(newEntry.activity_minutes),
+        activity_type: newEntry.activity_type,
         date: new Date()
       });
-      setNewEntry({ weight: "", sleep_hours: "", activity_minutes: "" });
+      setNewEntry({ weight: "", sleep_hours: "", activity_minutes: "", activity_type: "" });
       fetchEntries();
       fetchStats(period);
     } catch (err) {
@@ -75,9 +76,12 @@ export default function TableauSuivi() {
   return (
     <div style={{ minHeight: "100vh", background: "#FFFBEA" }}>
       <Sidebar />
-      <div className="container" style={{ maxWidth: 900, marginTop: 40, marginLeft: 240 }}>
-        <div className="card shadow p-3 mb-4">
-          <h5 className="mb-3" style={{ color: "#1ec287" }}>Tableau de suivi</h5>
+      <div className="container d-flex justify-content-center" style={{ maxWidth: 900, marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+        <div className="card shadow-lg p-4 mb-5 w-100" style={{ maxWidth: 900, background: 'linear-gradient(135deg, #e0ffe8 0%, #fffbe6 100%)', borderRadius: 24, boxShadow: '0 8px 32px rgba(30,194,135,0.12)', transition: 'box-shadow 0.3s', animation: 'fadeIn 0.7s' }}>
+          <h3 className="mb-4 text-center" style={{ color: '#1ec287', fontWeight: 'bold', letterSpacing: 1, textShadow: '0 2px 8px #cfcfc4' }}>
+            <i className="bi bi-table" style={{ marginRight: 10 }}></i>
+            Tableau de suivi
+          </h3>
 
           {/* Formulaire ajout */}
           <form onSubmit={handleAddEntry} className="mb-4">
@@ -105,6 +109,55 @@ export default function TableauSuivi() {
               onChange={handleInputChange}
               required
             />
+            <select
+              name="activity_type"
+              className="form-select"
+              value={newEntry.activity_type}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Type d'activité</option>
+              <option value="Course à pied">Course à pied</option>
+              <option value="Vélo">Vélo</option>
+              <option value="Natation">Natation</option>
+              <option value="Marche">Marche</option>
+              <option value="Musculation">Musculation</option>
+              <option value="Yoga">Yoga</option>
+              <option value="Fitness">Fitness</option>
+              <option value="Tennis">Tennis</option>
+              <option value="Football">Football</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Boxe">Boxe</option>
+              <option value="Danse">Danse</option>
+              <option value="Escalade">Escalade</option>
+              <option value="Randonnée">Randonnée</option>
+              <option value="Ski">Ski</option>
+              <option value="Rugby">Rugby</option>
+              <option value="Badminton">Badminton</option>
+              <option value="Crossfit">Crossfit</option>
+              <option value="Pilates">Pilates</option>
+              <option value="Arts martiaux">Arts martiaux</option>
+              <option value="Golf">Golf</option>
+              <option value="Aviron">Aviron</option>
+              <option value="Roller">Roller</option>
+              <option value="Skateboard">Skateboard</option>
+              <option value="Surf">Surf</option>
+              <option value="Plongée">Plongée</option>
+              <option value="Equitation">Equitation</option>
+              <option value="Volley">Volley</option>
+              <option value="Handball">Handball</option>
+              <option value="Triathlon">Triathlon</option>
+              <option value="Marathon">Marathon</option>
+              <option value="Trail">Trail</option>
+              <option value="Canoë">Canoë</option>
+              <option value="Snowboard">Snowboard</option>
+              <option value="Patinage">Patinage</option>
+              <option value="Spinning">Spinning</option>
+              <option value="HIIT">HIIT</option>
+              <option value="Stretching">Stretching</option>
+              <option value="Zumba">Zumba</option>
+              <option value="Aquagym">Aquagym</option>
+            </select>
             <button type="submit" className="btn btn-success ms-2">Ajouter</button>
           </form>
 

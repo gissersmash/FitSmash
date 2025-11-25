@@ -2,60 +2,43 @@
 import HealthEntry from "../models/HealthEntry.js";
 import { Op } from "sequelize";
 
-// Ajouter une entrée santé
+// ➕ Ajouter une entrée santé
 export async function addHealthEntry(req, res) {
   try {
-    const { weight, sleep, activity, date } = req.body;
+    const { weight, sleep, activity, date, activity_type } = req.body;
 
     const entry = await HealthEntry.create({
-      user_id: req.user.id,
+      user_id: req.user.id, // l’ID vient du middleware auth
       weight,
       sleep,
       activity,
-      date: new Date(date)
+      date: new Date(date),
+      activity_type, // Ajout du champ activity_type
     });
 
     res.status(201).json(entry);
   } catch (err) {
-    console.error("Erreur ajout HealthEntry:", err);
+    console.error("Erreur addHealthEntry:", err);
     res.status(500).json({ message: err.message });
   }
 }
 
-// Récupérer toutes les entrées santé de l'utilisateur
+//  Récupérer toutes les entrées santé de l’utilisateur
 export async function getHealthEntries(req, res) {
   try {
     const entries = await HealthEntry.findAll({
       where: { user_id: req.user.id },
-      order: [["date", "ASC"]]
+      order: [["date", "ASC"]],
     });
+
     res.json(entries);
   } catch (err) {
-    console.error("Erreur récupération HealthEntries:", err);
+    console.error("Erreur getHealthEntries:", err);
     res.status(500).json({ message: err.message });
   }
 }
 
-// Supprimer une entrée santé
-export async function deleteHealthEntry(req, res) {
-  try {
-    const { id } = req.params;
-
-    const entry = await HealthEntry.findOne({
-      where: { id, user_id: req.user.id }
-    });
-
-    if (!entry) return res.status(404).json({ message: "Entrée non trouvée" });
-
-    await entry.destroy();
-    res.json({ message: "Entrée supprimée" });
-  } catch (err) {
-    console.error("Erreur suppression HealthEntry:", err);
-    res.status(500).json({ message: err.message });
-  }
-}
-
-// Stats par période : semaine, mois, année
+//  Récupérer les stats par période (week, month, year)
 export async function getStats(req, res) {
   try {
     const { period } = req.params;
@@ -65,7 +48,7 @@ export async function getStats(req, res) {
     if (period === "week") {
       const day = now.getDay();
       startDate = new Date(now);
-      startDate.setDate(now.getDate() - day); // début semaine
+      startDate.setDate(now.getDate() - day);
     } else if (period === "month") {
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     } else if (period === "year") {
@@ -77,14 +60,31 @@ export async function getStats(req, res) {
     const entries = await HealthEntry.findAll({
       where: {
         user_id: req.user.id,
-        date: { [Op.gte]: startDate }
+        date: { [Op.gte]: startDate },
       },
-      order: [["date", "ASC"]]
+      order: [["date", "ASC"]],
     });
 
     res.json(entries);
   } catch (err) {
-    console.error("Erreur récupération stats:", err);
+    console.error("Erreur getStats:", err);
+    res.status(500).json({ message: err.message });
+  }
+}
+//  Supprimer une entrée
+export async function deleteHealthEntry(req, res) {
+  try {
+    const { id } = req.params;
+    const entry = await HealthEntry.findOne({
+      where: { id, user_id: req.user.id },
+    });
+
+    if (!entry) return res.status(404).json({ message: "Entrée non trouvée" });
+
+    await entry.destroy();
+    res.json({ message: "Entrée supprimée" });
+  } catch (err) {
+    console.error("Erreur deleteHealthEntry:", err);
     res.status(500).json({ message: err.message });
   }
 }

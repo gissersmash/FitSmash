@@ -1,3 +1,11 @@
+import HealthEntry from "./models/HealthEntry.js";
+HealthEntry.sync({ alter: true })
+  .then(() => console.log("✅ Table HealthEntry synchronisée"))
+  .catch(err => console.error("❌ Erreur sync HealthEntry:", err));
+import { Food } from "./models/Food.js";
+Food.sync({ alter: true })
+  .then(() => console.log("✅ Table Food synchronisée"))
+  .catch(err => console.error("❌ Erreur sync Food:", err));
 import foodEntriesRouter from "./routes/foodEntries.js";
 // Point d'entrée du serveur Express
 import express from "express";
