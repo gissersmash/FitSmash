@@ -1,6 +1,4 @@
-// frontend/src/services/goalService.js
 import axios from "axios";
-import { setToken } from "./api";
 
 const API_URL = "http://localhost:4000/api/goals";
 
@@ -17,5 +15,5 @@ export async function getNutritionGoals() {
   const res = await axios.get(API_URL, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
-  return res.data.goals || [];
+  return res.data || [];
 }

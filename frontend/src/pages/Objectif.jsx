@@ -5,16 +5,12 @@ import * as goalService from "../services/goalService";
 export default function Objectif() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
-  const [savedObjectifs, setSavedObjectifs] = useState([]);
-
-  const defaultObjectifs = [
+  const [objectifs, setObjectifs] = useState([
     { type: "Calories", objectif: "", pourcentage: "" },
     { type: "Glucides", objectif: "", pourcentage: "" },
     { type: "Lipides", objectif: "", pourcentage: "" },
     { type: "Protéines", objectif: "", pourcentage: "" }
-  ];
-
-  const [objectifs, setObjectifs] = useState(defaultObjectifs);
+  ]);
   const [validationMsg, setValidationMsg] = useState("");
 
   const totalPct = objectifs
@@ -25,7 +21,6 @@ export default function Objectif() {
   useEffect(() => {
     goalService.getNutritionGoals()
       .then(goals => {
-        setSavedObjectifs(goals);
         if (goals.length >= 4) {
           setObjectifs(goals.slice(-4).map(g => ({
             type: g.type,
@@ -49,9 +44,9 @@ export default function Objectif() {
       newArr[2].pourcentage = lipidesPct.toString();
       newArr[3].pourcentage = proteinesPct.toString();
 
-      newArr[1].objectif = Math.round((kcal * glucidesPct) / 100 / 4) + " g";
-      newArr[2].objectif = Math.round((kcal * lipidesPct) / 100 / 9) + " g";
-      newArr[3].objectif = Math.round((kcal * proteinesPct) / 100 / 4) + " g";
+      newArr[1].objectif = Math.round((kcal * glucidesPct) / 100 / 4).toString();
+      newArr[2].objectif = Math.round((kcal * lipidesPct) / 100 / 9).toString();
+      newArr[3].objectif = Math.round((kcal * proteinesPct) / 100 / 4).toString();
     } else {
       newArr.slice(1).forEach(obj => { obj.objectif = ""; obj.pourcentage = ""; });
     }
@@ -70,8 +65,14 @@ export default function Objectif() {
     }
 
     try {
-      const savedGoals = await goalService.saveNutritionGoals({ goals: objectifs });
-      setSavedObjectifs(savedGoals);
+      // Préparer payload correct pour le backend
+      const payload = objectifs.map(o => ({
+        type: o.type,
+        value: parseFloat(o.objectif) || 0,
+        pourcentage: o.pourcentage ? parseInt(o.pourcentage, 10) : null
+      }));
+
+      const savedGoals = await goalService.saveNutritionGoals(payload);
 
       // Sauvegarde locale
       localStorage.setItem("goals", JSON.stringify(savedGoals));
@@ -86,7 +87,12 @@ export default function Objectif() {
     }
   };
 
-  const handleClear = () => setObjectifs(defaultObjectifs);
+  const handleClear = () => setObjectifs([
+    { type: "Calories", objectif: "", pourcentage: "" },
+    { type: "Glucides", objectif: "", pourcentage: "" },
+    { type: "Lipides", objectif: "", pourcentage: "" },
+    { type: "Protéines", objectif: "", pourcentage: "" }
+  ]);
 
   return (
     <div style={{ minHeight: "100vh", background: "#FFFBEA" }}>
