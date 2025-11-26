@@ -18,7 +18,7 @@ export async function getFoodByBarcode(barcode) {
 }
 
 // Rechercher par mot clé (nom d’aliment)
-export async function searchFoodsByName(query) {
+export async function searchFoodsByName(query, page = 1) {
   const res = await axios.get(
     `https://world.openfoodfacts.org/cgi/search.pl`,
     {
@@ -27,7 +27,8 @@ export async function searchFoodsByName(query) {
         search_simple: 1,
         action: "process",
         json: 1,
-        page_size: 10,
+        page_size: 24, // On augmente le nombre de résultats par page
+        page: page, // On ajoute le numéro de page
       },
     }
   );
@@ -38,6 +39,7 @@ export async function searchFoodsByName(query) {
       calories: p.nutriments?.["energy-kcal_100g"] || 0,
       brand: p.brands || "N/A",
       quantity: "100g",
+      image: p.image_front_small_url || p.image_url || null, // Ajout de l'image
     }));
   }
   return [];

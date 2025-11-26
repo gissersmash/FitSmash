@@ -23,6 +23,9 @@ export default function Sidebar() {
         <Link to="/suivi-nutrition" className="nav-link text-dark mb-2">
           <i className="bi bi-egg-fried me-2"></i>Suivi nutrition
         </Link>
+        <Link to="/food-gallery" className="nav-link text-dark mb-2">
+          <i className="bi bi-images me-2"></i>Galerie Aliments
+        </Link>
         {/* Ajoute d'autres liens ici si besoin */}
       </nav>
     </div>

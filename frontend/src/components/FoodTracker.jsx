@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { getFoods, deleteFood, searchFoods } from "../services/foodService";
+import { getFoods, deleteFood } from "../services/foodService";
+import { searchFoodsByName } from "../services/nutritionService"; // 👈 1. Importer la bonne fonction
 import { setToken } from "../services/api";
 import axios from "axios";
 
@@ -63,12 +64,15 @@ export default function FoodTracker() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await searchFoods(searchTerm);
-      console.log("Réponse API recherche:", res.data);
+      // 👇 2. Utiliser la fonction de recherche externe
+      const results = await searchFoodsByName(searchTerm);
+      console.log("Réponse API recherche OpenFoodFacts:", results);
+
+      // La réponse est déjà un tableau formaté, pas besoin de res.data
       setFoods(
-        Array.isArray(res.data)
-          ? res.data
-          : res.data.foods || res.data.data || []
+        Array.isArray(results)
+          ? results
+          : []
       );
     } catch (err) {
       console.error(
