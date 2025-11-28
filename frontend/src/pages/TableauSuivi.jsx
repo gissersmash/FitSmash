@@ -83,101 +83,305 @@ export default function TableauSuivi() {
             Tableau de suivi
           </h3>
 
-          {/* Formulaire ajout */}
-          <form onSubmit={handleAddEntry} className="mb-4">
-            <input
-              name="weight"
-              type="number"
-              placeholder="Poids (kg)"
-              value={newEntry.weight}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              name="sleep_hours"
-              type="number"
-              placeholder="Sommeil (h)"
-              value={newEntry.sleep_hours}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              name="activity_minutes"
-              type="number"
-              placeholder="Activité (min)"
-              value={newEntry.activity_minutes}
-              onChange={handleInputChange}
-              required
-            />
-            <select
-              name="activity_type"
-              className="form-select"
-              value={newEntry.activity_type}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Type d'activité</option>
-              <option value="Course à pied">Course à pied</option>
-              <option value="Vélo">Vélo</option>
-              <option value="Natation">Natation</option>
-              <option value="Marche">Marche</option>
-              <option value="Musculation">Musculation</option>
-              <option value="Yoga">Yoga</option>
-              <option value="Fitness">Fitness</option>
-              <option value="Tennis">Tennis</option>
-              <option value="Football">Football</option>
-              <option value="Basketball">Basketball</option>
-              <option value="Boxe">Boxe</option>
-              <option value="Danse">Danse</option>
-              <option value="Escalade">Escalade</option>
-              <option value="Randonnée">Randonnée</option>
-              <option value="Ski">Ski</option>
-              <option value="Rugby">Rugby</option>
-              <option value="Badminton">Badminton</option>
-              <option value="Crossfit">Crossfit</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Arts martiaux">Arts martiaux</option>
-              <option value="Golf">Golf</option>
-              <option value="Aviron">Aviron</option>
-              <option value="Roller">Roller</option>
-              <option value="Skateboard">Skateboard</option>
-              <option value="Surf">Surf</option>
-              <option value="Plongée">Plongée</option>
-              <option value="Equitation">Equitation</option>
-              <option value="Volley">Volley</option>
-              <option value="Handball">Handball</option>
-              <option value="Triathlon">Triathlon</option>
-              <option value="Marathon">Marathon</option>
-              <option value="Trail">Trail</option>
-              <option value="Canoë">Canoë</option>
-              <option value="Snowboard">Snowboard</option>
-              <option value="Patinage">Patinage</option>
-              <option value="Spinning">Spinning</option>
-              <option value="HIIT">HIIT</option>
-              <option value="Stretching">Stretching</option>
-              <option value="Zumba">Zumba</option>
-              <option value="Aquagym">Aquagym</option>
-            </select>
-            <button type="submit" className="btn btn-success ms-2">Ajouter</button>
-          </form>
-
-          {/* Sélecteur période pour stats */}
-          <div className="mb-3">
-            <label>Période:</label>
-            <select value={period} onChange={(e) => setPeriod(e.target.value)} className="ms-2">
-              <option value="week">Semaine</option>
-              <option value="month">Mois</option>
-              <option value="year">Année</option>
-            </select>
-            <button className="btn btn-primary ms-2" onClick={() => fetchStats(period)}>Actualiser</button>
+          {/* Statistiques rapides */}
+          <div className="row mb-4">
+            <div className="col-md-4">
+              <div style={{
+                background: 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)',
+                borderRadius: '16px',
+                padding: '20px',
+                color: 'white',
+                textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(30, 194, 135, 0.3)',
+                transform: 'translateY(0)',
+                transition: 'transform 0.3s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <i className="bi bi-bar-chart-fill" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{entries.length}</div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>Total entrées</div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                borderRadius: '16px',
+                padding: '20px',
+                color: 'white',
+                textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                transform: 'translateY(0)',
+                transition: 'transform 0.3s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <i className="bi bi-speedometer2" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                  {entries.length > 0 ? (entries.reduce((sum, e) => sum + (parseFloat(e.weight) || 0), 0) / entries.length).toFixed(1) : '0'}
+                </div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>Poids moyen (kg)</div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div style={{
+                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                borderRadius: '16px',
+                padding: '20px',
+                color: 'white',
+                textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+                transform: 'translateY(0)',
+                transition: 'transform 0.3s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <i className="bi bi-moon-stars-fill" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                  {entries.length > 0 ? (entries.reduce((sum, e) => sum + (parseFloat(e.sleep) || 0), 0) / entries.length).toFixed(1) : '0'}
+                </div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>Sommeil moyen (h)</div>
+              </div>
+            </div>
           </div>
 
-          {/* Tableau */}
-          <HealthTable entries={entries} onDelete={handleDelete} />
+          {/* Formulaire ajout amélioré */}
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+          }}>
+            <h5 style={{ color: '#1ec287', marginBottom: '20px', fontWeight: '600' }}>
+              <i className="bi bi-plus-circle-fill me-2"></i>
+              Ajouter une entrée
+            </h5>
+            <form onSubmit={handleAddEntry}>
+              <div className="row g-3">
+                <div className="col-md-3">
+                  <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Poids (kg)</label>
+                  <input
+                    name="weight"
+                    type="number"
+                    step="0.1"
+                    className="form-control"
+                    placeholder="Ex: 70.5"
+                    value={newEntry.weight}
+                    onChange={handleInputChange}
+                    required
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e5e7eb',
+                      padding: '10px 14px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Sommeil (h)</label>
+                  <input
+                    name="sleep_hours"
+                    type="number"
+                    step="0.5"
+                    className="form-control"
+                    placeholder="Ex: 7.5"
+                    value={newEntry.sleep_hours}
+                    onChange={handleInputChange}
+                    required
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e5e7eb',
+                      padding: '10px 14px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Activité (min)</label>
+                  <input
+                    name="activity_minutes"
+                    type="number"
+                    className="form-control"
+                    placeholder="Ex: 45"
+                    value={newEntry.activity_minutes}
+                    onChange={handleInputChange}
+                    required
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e5e7eb',
+                      padding: '10px 14px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Type d'activité</label>
+                  <select
+                    name="activity_type"
+                    className="form-select"
+                    value={newEntry.activity_type}
+                    onChange={handleInputChange}
+                    required
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e5e7eb',
+                      padding: '10px 14px',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Choisir...</option>
+                    <option value="Course à pied">🏃 Course à pied</option>
+                    <option value="Vélo">🚴 Vélo</option>
+                    <option value="Natation">🏊 Natation</option>
+                    <option value="Marche">🚶 Marche</option>
+                    <option value="Musculation">💪 Musculation</option>
+                    <option value="Yoga">🧘 Yoga</option>
+                    <option value="Fitness">🤸 Fitness</option>
+                    <option value="Tennis">🎾 Tennis</option>
+                    <option value="Football">⚽ Football</option>
+                    <option value="Basketball">🏀 Basketball</option>
+                    <option value="Boxe">🥊 Boxe</option>
+                    <option value="Danse">💃 Danse</option>
+                    <option value="Escalade">🧗 Escalade</option>
+                    <option value="Randonnée">🥾 Randonnée</option>
+                    <option value="Ski">⛷️ Ski</option>
+                    <option value="Rugby">🏉 Rugby</option>
+                    <option value="Badminton">🏸 Badminton</option>
+                    <option value="Crossfit">🏋️ Crossfit</option>
+                    <option value="Pilates">Pilates</option>
+                    <option value="Arts martiaux">🥋 Arts martiaux</option>
+                    <option value="Golf">⛳ Golf</option>
+                    <option value="Aviron">🚣 Aviron</option>
+                    <option value="Roller">⛸️ Roller</option>
+                    <option value="Skateboard">🛹 Skateboard</option>
+                    <option value="Surf">🏄 Surf</option>
+                    <option value="Plongée">🤿 Plongée</option>
+                    <option value="Equitation">🏇 Equitation</option>
+                    <option value="Volley">🏐 Volley</option>
+                    <option value="Handball">🤾 Handball</option>
+                    <option value="Triathlon">🏊‍♂️🚴‍♂️🏃 Triathlon</option>
+                    <option value="Marathon">Marathon</option>
+                    <option value="Trail">Trail</option>
+                    <option value="Canoë">🛶 Canoë</option>
+                    <option value="Snowboard">🏂 Snowboard</option>
+                    <option value="Patinage">⛸️ Patinage</option>
+                    <option value="Spinning">Spinning</option>
+                    <option value="HIIT">HIIT</option>
+                    <option value="Stretching">Stretching</option>
+                    <option value="Zumba">Zumba</option>
+                    <option value="Aquagym">Aquagym</option>
+                  </select>
+                </div>
+              </div>
+              <div className="text-end mt-3">
+                <button 
+                  type="submit" 
+                  className="btn"
+                  style={{
+                    background: 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '10px 28px',
+                    fontWeight: '600',
+                    boxShadow: '0 4px 12px rgba(30, 194, 135, 0.3)',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <i className="bi bi-check-circle me-2"></i>
+                  Ajouter l'entrée
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Sélecteur période pour stats */}
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <label style={{ margin: 0, fontWeight: '600', color: '#333', fontSize: '14px' }}>
+                <i className="bi bi-calendar3 me-2"></i>
+                Période des statistiques:
+              </label>
+              <select 
+                value={period} 
+                onChange={(e) => setPeriod(e.target.value)}
+                className="form-select"
+                style={{
+                  width: 'auto',
+                  borderRadius: '8px',
+                  border: '2px solid #e5e7eb',
+                  padding: '6px 12px',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
+              >
+                <option value="week">📅 Cette semaine</option>
+                <option value="month">📆 Ce mois</option>
+                <option value="year">📊 Cette année</option>
+              </select>
+            </div>
+            <button 
+              className="btn"
+              onClick={() => fetchStats(period)}
+              style={{
+                background: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '6px 20px',
+                fontWeight: '600',
+                fontSize: '14px',
+                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
+              }}
+            >
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Actualiser
+            </button>
+          </div>
+
+          {/* Tableau des entrées */}
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+          }}>
+            <h5 style={{ color: '#1ec287', marginBottom: '20px', fontWeight: '600' }}>
+              <i className="bi bi-list-check me-2"></i>
+              Toutes mes entrées
+            </h5>
+            <HealthTable entries={entries} onDelete={handleDelete} />
+          </div>
           
           {/* Stats par période */}
-          <h6 className="mt-4" style={{ color: "#1ec287" }}>Stats ({period})</h6>
-          <HealthTable entries={stats} onDelete={handleDelete} />
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+          }}>
+            <h5 style={{ color: '#3b82f6', marginBottom: '20px', fontWeight: '600' }}>
+              <i className="bi bi-graph-up me-2"></i>
+              Statistiques - {period === 'week' ? 'Semaine' : period === 'month' ? 'Mois' : 'Année'}
+            </h5>
+            <HealthTable entries={stats} onDelete={handleDelete} showActions={false} />
+          </div>
         </div>
       </div>
     </div>

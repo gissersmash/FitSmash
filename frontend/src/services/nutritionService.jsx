@@ -11,7 +11,7 @@ export async function getFoodByBarcode(barcode) {
       name: p.product_name || "Inconnu",
       calories: p.nutriments["energy-kcal_100g"] || 0,
       brand: p.brands || "N/A",
-      quantity: "100g", // valeurs nutritionnelles pour 100g
+      quantity: "100g", 
     };
   }
   throw new Error("Produit introuvable");
@@ -27,8 +27,6 @@ export async function searchFoodsByName(query, page = 1) {
         search_simple: 1,
         action: "process",
         json: 1,
-        page_size: 24, // On augmente le nombre de résultats par page
-        page: page, // On ajoute le numéro de page
       },
     }
   );

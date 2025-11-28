@@ -9,12 +9,17 @@ import MesObjectifs from "./pages/MesObjectifs.jsx";
 import SuiviNutrition from "./pages/SuiviNutrition.jsx";
 
 function App() {
-  // Récupère l'utilisateur depuis le localStorage (après login)
   const user = JSON.parse(localStorage.getItem('user')) || null;
   const isAuthenticated = !!localStorage.getItem('token');
+  
   return (
     <MantineProvider>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />

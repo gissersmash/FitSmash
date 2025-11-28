@@ -35,53 +35,71 @@ export default function GraphiqueSante() {
     <div style={{ minHeight: "100vh", background: "#FFFBEA" }}>
       <Sidebar />
       <div
-        className="container d-flex justify-content-center"
         style={{
-          maxWidth: 900,
+          maxWidth: 1100,
           marginTop: 40,
-          marginLeft: "auto",
-          marginRight: "auto",
+          marginLeft: 300,
+          marginRight: 'auto',
+          paddingBottom: 60
         }}
       >
         <div
-          className="card shadow-lg p-4 mb-5 w-100"
           style={{
-            maxWidth: 900,
-            background:
-              "linear-gradient(135deg, #e0ffe8 0%, #fffbe6 100%)",
+            background: "linear-gradient(135deg, #ffffff 0%, #f8fafb 100%)",
             borderRadius: 24,
-            boxShadow: "0 8px 32px rgba(30,194,135,0.12)",
-            transition: "box-shadow 0.3s",
-            animation: "fadeIn 0.7s",
+            padding: 40,
+            boxShadow: "0 10px 40px rgba(30,194,135,0.15)",
+            border: '1px solid rgba(30, 194, 135, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #1ec287 0%, #16a970 50%, #1ec287 100%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 3s linear infinite'
+          }} />
+          
           <h3
-            className="mb-4 text-center"
             style={{
               color: "#1ec287",
               fontWeight: "bold",
-              letterSpacing: 1,
-              textShadow: "0 2px 8px #cfcfc4",
+              letterSpacing: 0,
+              marginBottom: 32,
+              fontSize: 28,
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 12
             }}
           >
-            <i
-              className="bi bi-bar-chart"
-              style={{ marginRight: 10 }}
-            ></i>
-            Graphique santé
+            <i className="bi bi-activity" style={{ fontSize: 32 }}></i>
+            Graphique Santé
           </h3>
-          <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: 24, maxWidth: 900, margin: '0 auto' }}>
-            <HealthChart
-              entries={entries.map((e) => ({
-                weight: e.weight,
-                sleep_hours: e.sleep,
-                activity_minutes: e.activity,
-                created_at: e.date,
-              }))}
-            />
-          </div>
+          
+          <HealthChart
+            entries={entries.map((e) => ({
+              weight: e.weight,
+              sleep_hours: e.sleep,
+              activity_minutes: e.activity,
+              created_at: e.date,
+            }))}
+          />
         </div>
       </div>
+
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `}</style>
     </div>
   );
 }
