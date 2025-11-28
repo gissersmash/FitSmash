@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build: . # Construit l'image à partir du Dockerfile dans le répertoire courant
+    container_name: sante_app_backend
+    ports:
+      - "4000:4000" # Mappe le port 4000 de l'hôte au port 4000 du conteneur
+    volumes:
+      - ./src:/app/src # Monte le dossier src local dans le conteneur pour le hot-reloading
+    env_file:
+      - .env # Charge les variables d'environnement depuis le fichier .env
+    depends_on:
+      db:
+        condition: service_healthy # Attend que la base de données soit prête
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: sante_app_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      # Utilise mysqladmin avec le mot de passe pour vérifier la connexion.
+      # Le mot de passe est passé via une variable pour éviter les problèmes avec les caractères spéciaux.
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --password=$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
