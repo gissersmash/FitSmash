@@ -1,0 +1,14 @@
+# Fichier de variables d'environnement - NE JAMAIS PARTAGER
+.env
+
+# Dépendances Node.js - Peut être réinstallé avec `npm install`
+node_modules/
+
+# Fichiers de log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dossiers de build (si vous en avez)
+/dist
+/build
