@@ -9,8 +9,7 @@ export default function Sidebar() {
     { path: '/dashboard', icon: 'bi-house-door', label: 'Accueil' },
     { path: '/tableau-suivi', icon: 'bi-table', label: 'Tableau de suivi' },
     { path: '/graphique-sante', icon: 'bi-graph-up', label: 'Graphique santé' },
-    { path: '/objectif', icon: 'bi-bullseye', label: 'Objectif' },
-    { path: '/suivi-nutrition', icon: 'bi-apple', label: 'Suivi nutrition' }
+    { path: '/objectif', icon: 'bi-bullseye', label: 'Objectif' }
   ];
 
   return (

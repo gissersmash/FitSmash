@@ -7,3 +7,12 @@ export const saveFoodEntries = (entries) => {
 export const getFoodEntries = () => {
   return API.get("/food-entries");
 };
+
+export const addFoodEntry = (foodData) => {
+  console.log("addFoodEntry appelé avec:", foodData);
+  return API.post("/food-entries", foodData);
+};
+
+export const deleteFoodEntry = (id) => {
+  return API.delete(`/food-entries/${id}`);
+};

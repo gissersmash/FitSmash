@@ -6,7 +6,6 @@ import TableauSuivi from "./pages/TableauSuivi.jsx";
 import GraphiqueSante from "./pages/GraphiqueSante.jsx";
 import Objectif from "./pages/Objectif.jsx";
 import MesObjectifs from "./pages/MesObjectifs.jsx";
-import SuiviNutrition from "./pages/SuiviNutrition.jsx";
 
 function App() {
   const user = JSON.parse(localStorage.getItem('user')) || null;
@@ -28,7 +27,6 @@ function App() {
           <Route path="/graphique-sante" element={<GraphiqueSante />} />
           <Route path="/objectif" element={<Objectif />} />
           <Route path="/mes-objectifs" element={<MesObjectifs />} />
-          <Route path="/suivi-nutrition" element={<SuiviNutrition />} />
         </Routes>
       </Router>
     </MantineProvider>
