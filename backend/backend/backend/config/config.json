@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "regis.tchikangwa@hotmail.fr",
+    "password": "Snoop94380",
+    "database": "sante_app",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "regis.tchikangwa@hotmail.fr",
+    "password": "Snoop94380",
+    "database": "sante_app_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "regis.tchikangwa@hotmail.fr",
+    "password": "Snoop94380",
+    "database": "sante_app_prod",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
