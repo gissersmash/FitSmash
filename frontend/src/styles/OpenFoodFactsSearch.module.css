@@ -1,0 +1,490 @@
+/* frontend/src/styles/OpenFoodFactsSearch.module.css */
+
+.searchContainer {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e9ecef;
+}
+
+.searchHeader {
+  margin-bottom: 20px;
+}
+
+.searchHeaderContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.searchIconWrapper {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(30, 194, 135, 0.3);
+}
+
+.searchTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.searchSubtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.searchForm {
+  margin-bottom: 24px;
+}
+
+.searchInputGroup {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 14px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #1ec287;
+  box-shadow: 0 0 0 4px rgba(30, 194, 135, 0.1);
+}
+
+.searchInput:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.searchButton {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.searchButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(30, 194, 135, 0.4);
+}
+
+.searchButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.searchButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loadingText {
+  margin-top: 16px;
+  color: #6c757d;
+  font-size: 15px;
+}
+
+.errorState {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 12px;
+  padding: 16px 20px;
+  color: #856404;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.resultsContainer {
+  margin-top: 24px;
+}
+
+.resultsHeader {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: 2px solid #28a745;
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  color: #155724;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.legendBox {
+  background: linear-gradient(135deg, #e8f4f0 0%, #f0fdf4 100%);
+  border: 2px solid #1ec287;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.legendTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.legendItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.legendItem i {
+  font-size: 18px;
+}
+
+.legendNote {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(30, 194, 135, 0.3);
+}
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.foodCard {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.foodCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #1ec287;
+}
+
+.foodCardImage {
+  width: 100%;
+  height: 180px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.foodCardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noImage {
+  font-size: 48px;
+  color: #dee2e6;
+}
+
+.foodCardContent {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.foodName {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.4;
+  min-height: 44px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.quantityControl {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 2px solid #dee2e6;
+}
+
+.quantityLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.quantityInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantityBtn {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.quantityBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(30, 194, 135, 0.4);
+}
+
+.quantityBtn:active {
+  transform: scale(0.95);
+}
+
+.quantityInput {
+  flex: 1;
+  height: 36px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  border: 2px solid #1ec287;
+  border-radius: 8px;
+  background: white;
+  padding: 0 8px;
+  transition: all 0.2s ease;
+}
+
+.quantityInput:focus {
+  outline: none;
+  border-color: #16a970;
+  box-shadow: 0 0 0 4px rgba(30, 194, 135, 0.2);
+}
+
+.quantityInput::-webkit-inner-spin-button,
+.quantityInput::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+.quickQuantities {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.quickBtn {
+  flex: 1;
+  padding: 6px 8px;
+  background: white;
+  color: #495057;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickBtn:hover {
+  background: #f8f9fa;
+  border-color: #1ec287;
+  color: #1ec287;
+}
+
+.quickBtnActive {
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  color: white;
+  border-color: #1ec287;
+}
+
+.quickBtnActive:hover {
+  background: linear-gradient(135deg, #16a970 0%, #1ec287 100%);
+  color: white;
+}
+
+.nutritionInfo {
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.nutritionLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  text-align: center;
+}
+
+.nutrientsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.nutrientBadge {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  cursor: help;
+  border: 2px solid transparent;
+}
+
+.nutrientBadge:hover {
+  background: #e9ecef;
+  border-color: #1ec287;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(30, 194, 135, 0.2);
+}
+
+.nutrientBadge i {
+  color: #1ec287;
+  font-size: 20px;
+}
+
+.nutrientInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.nutrientValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.nutrientUnit {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.addButton {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 194, 135, 0.4);
+}
+
+.addButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .searchInputGroup {
+    flex-direction: column;
+  }
+
+  .searchButton {
+    justify-content: center;
+  }
+
+  .resultsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .searchContainer {
+    padding: 16px;
+  }
+
+  .legendItems {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .legendBox {
+    padding: 12px 16px;
+  }
+
+  .nutrientsGrid {
+    grid-template-columns: 1fr;
+  }
+}

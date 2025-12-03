@@ -1,55 +1,56 @@
-import HealthEntry from "./models/HealthEntry.js";
-HealthEntry.sync({ alter: true })
-  .then(() => console.log("✅ Table HealthEntry synchronisée"))
-  .catch(err => console.error("❌ Erreur sync HealthEntry:", err));
-import { Food } from "./models/Food.js";
-Food.sync({ alter: true })
-  .then(() => console.log("✅ Table Food synchronisée"))
-  .catch(err => console.error("❌ Erreur sync Food:", err));
-import foodEntriesRouter from "./routes/foodEntries.js";
 // Point d'entrée du serveur Express
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import { testDBConnection } from "./config/db.js";
+
+// Import des modèles pour synchronisation
+import HealthEntry from "./models/HealthEntry.js";
+import { Food } from "./models/Food.js";
+
+// Import des routes
+import authRoutes from "./routes/auth.routes.js";
 import healthRoutes from "./routes/health.routes.js";
 import objectiveRoutes from "./routes/objective.routes.js";
 import foodRoutes from "./routes/food.routes.js";
 import goalsRoutes from "./routes/goals.routes.js";
+import foodEntriesRouter from "./routes/foodEntries.js";
+import openFoodFactsRoutes from "./routes/openFoodFacts.routes.js";
 
 dotenv.config();
 
-import { testDBConnection } from "./config/db.js";
-import authRoutes from "./routes/auth.routes.js";
-
 const app = express();
+
+// Middleware
 // Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 app.options(/.*/, cors());
 app.use(express.json());
 app.use(cookieParser());
 
+// Routes API
+app.use("/api/auth", authRoutes);
+app.use("/api/health", healthRoutes);
+app.use("/api/objectives", objectiveRoutes);
+app.use("/api/foods", foodRoutes);
+app.use("/api/goals", goalsRoutes);
 app.use("/api/food-entries", foodEntriesRouter);
+app.use("/api/open-food-facts", openFoodFactsRoutes);
 
-// Middleware
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
-app.options(/.*/, cors());
-app.use(express.json());
-app.use(cookieParser());
-
-// Route d'authentification
-app.use("/api/auth", authRoutes); // On active les routes auth
-app.use("/api/health", healthRoutes);  //  Active les routes santé
-app.use("/api/objectives", objectiveRoutes); // Active les routes objectifs
-app.use("/api/foods", foodRoutes); // Active les routes aliments
-app.use("/api/goals", goalsRoutes); // Active les routes objectifs nutritionnels
-
-
-// Test API
+// Route de test
 app.get("/api/healthcheck", (req, res) => {
   res.json({ ok: true, message: "API fonctionne 🚀" });
 });
 
+// Synchronisation des modèles
+HealthEntry.sync({ alter: true })
+  .then(() => console.log("✅ Table HealthEntry synchronisée"))
+  .catch(err => console.error("❌ Erreur sync HealthEntry:", err));
+
+Food.sync({ alter: true })
+  .then(() => console.log("✅ Table Food synchronisée"))
+  .catch(err => console.error("❌ Erreur sync Food:", err));
 
 // Lancer serveur
 const port = process.env.PORT || 4000;

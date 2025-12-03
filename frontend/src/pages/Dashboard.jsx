@@ -8,6 +8,7 @@ import Sidebar from '../components/Sidebar';
 import CaloriesDonutChart from '../components/CaloriesDonutChart';
 import { ProgressBar } from "react-bootstrap";  
 import WeeklyCaloriesChart from "../components/WeeklyCaloriesChart";
+import OpenFoodFactsSearch from '../components/OpenFoodFactsSearch';
 import styles from '../styles/Dashboard.module.css';
 
 export default function Dashboard() {
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const [foodsLoading, setFoodsLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showOpenFoodSearch, setShowOpenFoodSearch] = useState(false);
   const [newFood, setNewFood] = useState({ name: '', calories: '', proteins: '', carbs: '', fats: '', image: '' });
   const navigate = useNavigate();
 
@@ -86,21 +88,28 @@ export default function Dashboard() {
         date: new Date().toISOString().split('T')[0]
       };
       
-      console.log('📤 Envoi payload vers /api/food-entries:', payload);
+      // console.log('📤 Envoi payload vers /api/food-entries:', payload);
       
       const res = await axios.post('http://localhost:4000/api/food-entries', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      console.log('✅ Réponse backend:', res.data);
+      // console.log('✅ Réponse backend:', res.data);
       
-      const created = res.data && (res.data.entry || res.data.data || res.data) ? (res.data.entry || res.data.data || res.data) : payload;
-      setFoodEntries(prev => [created, ...prev]);
+      // Recharger les entrées depuis le backend
+      const entriesRes = await getFoodEntries();
+      let entries = [];
+      if (Array.isArray(entriesRes.data)) entries = entriesRes.data;
+      else if (Array.isArray(entriesRes.data.entries)) entries = entriesRes.data.entries;
+      else if (Array.isArray(entriesRes.data.data)) entries = entriesRes.data.data;
+      
+      // console.log('📊 Entrées reçues après ajout:', entries.length, 'aliments');
+      setFoodEntries(entries);
       
       // Refresh goals after adding food
       refreshGoals();
       
-      alert('✅ Aliment ajouté à votre suivi quotidien !');
+      alert(`✅ ${payload.name} ajouté à votre suivi quotidien !\n📦 Quantité: ${payload.quantity || 100}g\n🔥 ${payload.calories} kcal`);
     } catch (err) {
       console.error("❌ Erreur ajout entrée alimentaire:", err);
       console.error("Détails:", err.response?.data);
@@ -163,12 +172,33 @@ export default function Dashboard() {
       <div className={styles.content}>
         <div className={styles.heroSection}>
           <div>
-            <h2 className={styles.heroTitle}>Bienvenue, {username} 👋</h2>
+            <h2 className={styles.heroTitle}>Bienvenue, {username}</h2>
             <p className={styles.heroSubtitle}>Suivez vos calories et atteignez vos objectifs santé</p>
           </div>
           <button className={`btn btn-light ${styles.logoutBtn}`} onClick={handleLogout}>
             <i className="bi bi-box-arrow-right me-2"></i>Déconnexion
           </button>
+        </div>
+
+        {/* Barre de recherche Open Food Facts */}
+        <div style={{ marginBottom: '24px' }}>
+          <button 
+            className={`btn ${styles.loadBtn}`}
+            onClick={() => setShowOpenFoodSearch(!showOpenFoodSearch)}
+            style={{ 
+              width: '100%',
+              padding: '16px',
+              fontSize: '16px',
+              marginBottom: showOpenFoodSearch ? '20px' : '0'
+            }}
+          >
+            <i className={`bi ${showOpenFoodSearch ? 'bi-x-circle' : 'bi-search'} me-2`}></i>
+            {showOpenFoodSearch ? 'Fermer la recherche' : 'Rechercher un aliment (Open Food Facts)'}
+          </button>
+          
+          {showOpenFoodSearch && (
+            <OpenFoodFactsSearch onFoodAdd={addFoodToEntries} />
+          )}
         </div>
 
         <div className="row g-4 mb-4">
