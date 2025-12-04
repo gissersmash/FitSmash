@@ -16,7 +16,7 @@ export default function TableauSuivi() {
       const res = await getHealthEntries();
       setEntries(res.data);
     } catch (err) {
-      console.error("Erreur récupération entrées:", err);
+      // Erreur silencieuse
     }
   };
 
@@ -26,7 +26,7 @@ export default function TableauSuivi() {
       const res = await getStats(p);
       setStats(res.data);
     } catch (err) {
-      console.error("Erreur récupération stats:", err);
+      // Erreur silencieuse
     }
   };
 
@@ -59,7 +59,7 @@ export default function TableauSuivi() {
       fetchEntries();
       fetchStats(period);
     } catch (err) {
-      console.error("Erreur ajout entrée:", err);
+      // Error handled silently
     }
   };
 
@@ -69,7 +69,7 @@ export default function TableauSuivi() {
       setEntries(entries.filter(e => e.id !== id));
       fetchStats(period);
     } catch (err) {
-      console.error("Erreur suppression entrée:", err);
+      // Erreur silencieuse
     }
   };
 
@@ -127,12 +127,12 @@ export default function TableauSuivi() {
             </div>
             <div className="col-md-4">
               <div style={{
-                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                background: 'linear-gradient(135deg, #ffc107 0%, #ffa000 100%)',
                 borderRadius: '16px',
                 padding: '20px',
                 color: 'white',
                 textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+                boxShadow: '0 4px 12px rgba(255, 193, 7, 0.3)',
                 transform: 'translateY(0)',
                 transition: 'transform 0.3s'
               }}
@@ -234,12 +234,12 @@ export default function TableauSuivi() {
                     }}
                   >
                     <option value="">Choisir...</option>
-                    <option value="Course à pied">🏃 Course à pied</option>
+                    <option value="Course à pied">Course à pied</option>
                     <option value="Vélo">🚴 Vélo</option>
                     <option value="Natation">🏊 Natation</option>
                     <option value="Marche">🚶 Marche</option>
-                    <option value="Musculation">💪 Musculation</option>
-                    <option value="Yoga">🧘 Yoga</option>
+                    <option value="Musculation">Musculation</option>
+                    <option value="Yoga">Yoga</option>
                     <option value="Fitness">🤸 Fitness</option>
                     <option value="Tennis">🎾 Tennis</option>
                     <option value="Football">⚽ Football</option>
@@ -263,7 +263,7 @@ export default function TableauSuivi() {
                     <option value="Equitation">🏇 Equitation</option>
                     <option value="Volley">🏐 Volley</option>
                     <option value="Handball">🤾 Handball</option>
-                    <option value="Triathlon">🏊‍♂️🚴‍♂️🏃 Triathlon</option>
+                    <option value="Triathlon">Triathlon</option>
                     <option value="Marathon">Marathon</option>
                     <option value="Trail">Trail</option>
                     <option value="Canoë">🛶 Canoë</option>

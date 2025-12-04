@@ -25,7 +25,7 @@ const UserNav = ({ user }) => {
               <Dropdown align="end">
                 <Dropdown.Toggle variant="success" id="dropdown-user">
                   <img
-                    src={user.avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.name)}`}
+                    src={user.avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.name)}&size=128`}
                     alt="avatar"
                     style={{ width: 32, height: 32, borderRadius: '50%', marginRight: 8 }}
                   />

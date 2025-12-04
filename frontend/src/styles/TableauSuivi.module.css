@@ -1,0 +1,183 @@
+/* TableauSuivi Styles */
+
+.container {
+  min-height: 100vh;
+  background: #FFFBEA;
+}
+
+.mainCard {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  background: linear-gradient(135deg, #e0ffe8 0%, #fffbe6 100%);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(30, 194, 135, 0.12);
+  animation: fadeIn 0.7s;
+}
+
+.mainTitle {
+  color: #1ec287;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #cfcfc4;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.statCard {
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+  text-align: center;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+}
+
+.statCardGreen {
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  box-shadow: 0 4px 12px rgba(30, 194, 135, 0.3);
+}
+
+.statCardBlue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.statCardYellow {
+  background: linear-gradient(135deg, #ffc107 0%, #ffa000 100%);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.statIcon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.statLabel {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.formCard {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.formTitle {
+  color: #1ec287;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE & TABLETTE
+   ============================================ */
+
+/* Tablettes */
+@media (max-width: 992px) {
+  .mainCard {
+    margin: 20px;
+    padding: 24px;
+  }
+
+  .statCard {
+    margin-bottom: 16px;
+  }
+}
+
+/* Téléphones */
+@media (max-width: 768px) {
+  .mainCard {
+    margin: 16px;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .mainTitle {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+
+  .statCard {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .statIcon {
+    font-size: 28px;
+  }
+
+  .statValue {
+    font-size: 24px;
+  }
+
+  .statLabel {
+    font-size: 12px;
+  }
+
+  .formCard {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .formTitle {
+    font-size: 16px;
+  }
+}
+
+/* Petits téléphones */
+@media (max-width: 480px) {
+  .mainCard {
+    margin: 12px;
+    padding: 16px;
+  }
+
+  .mainTitle {
+    font-size: 18px;
+    letter-spacing: 0.5px;
+  }
+
+  .statCard {
+    padding: 14px;
+  }
+
+  .statIcon {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .statValue {
+    font-size: 20px;
+  }
+
+  .statLabel {
+    font-size: 11px;
+  }
+
+  .formCard {
+    padding: 14px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

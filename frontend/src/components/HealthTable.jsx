@@ -17,12 +17,12 @@ export default function HealthTable({ entries, onDelete, showActions = true }) {
   }
 
   const activityIcons = {
-    'Course à pied': '🏃',
+    'Course à pied': '',
     'Vélo': '🚴',
     'Natation': '🏊',
     'Marche': '🚶',
-    'Musculation': '💪',
-    'Yoga': '🧘',
+    'Musculation': '',
+    'Yoga': '',
     'Fitness': '🤸',
     'Tennis': '🎾',
     'Football': '⚽',
@@ -191,7 +191,7 @@ export default function HealthTable({ entries, onDelete, showActions = true }) {
                     display: 'inline-block',
                     transition: 'all 0.2s'
                   }}>
-                    {activityIcons[entry.activity_type] || '🏃'} {entry.activity_type}
+                    {entry.activity_type}
                   </span>
                 ) : '-'}
               </td>

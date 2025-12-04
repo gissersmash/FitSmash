@@ -1,0 +1,38 @@
+/* Sidebar Responsive Styles */
+
+/* Tablettes et Desktop */
+@media (min-width: 769px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
+
+  .mobile-overlay {
+    display: none !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-overlay {
+    display: block !important;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 280px;
+  }
+}

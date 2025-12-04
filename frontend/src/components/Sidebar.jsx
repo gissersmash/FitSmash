@@ -1,44 +1,97 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import '../styles/Sidebar.css';
 
 export default function Sidebar() {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user')) || { name: 'Utilisateur' };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { path: '/dashboard', icon: 'bi-house-door', label: 'Accueil' },
     { path: '/tableau-suivi', icon: 'bi-table', label: 'Tableau de suivi' },
     { path: '/graphique-sante', icon: 'bi-graph-up', label: 'Graphique santé' },
-    { path: '/objectif', icon: 'bi-bullseye', label: 'Objectif' }
+    { path: '/objectif', icon: 'bi-bullseye', label: 'Objectif' },
+    { path: '/abonnement', icon: 'bi-star', label: 'Abonnement' },
+    { path: '/contact', icon: 'bi-envelope-heart', label: 'Contact' },
+    { path: '/parametres', icon: 'bi-gear-fill', label: 'Paramètres' }
   ];
 
   return (
-    <div
-      style={{
-        width: 250,
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #1ec287 0%, #16a970 100%)',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        boxShadow: '4px 0 20px rgba(0,0,0,0.15)',
-        zIndex: 1000,
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      {/* Header avec avatar */}
-      <div 
-        className="text-center py-4" 
+    <>
+      {/* Bouton hamburger pour mobile */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         style={{
-          background: 'rgba(255,255,255,0.1)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255,255,255,0.2)'
+          position: 'fixed',
+          top: 20,
+          left: 20,
+          zIndex: 1100,
+          background: '#1ec287',
+          color: 'white',
+          border: 'none',
+          borderRadius: 12,
+          width: 48,
+          height: 48,
+          display: 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 12px rgba(30, 194, 135, 0.4)',
+          cursor: 'pointer',
+          transition: 'all 0.3s'
+        }}
+        className="mobile-menu-btn"
+      >
+        <i className={`bi ${isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'}`} style={{ fontSize: 24 }}></i>
+      </button>
+
+      {/* Overlay pour fermer le menu mobile */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1050,
+            display: 'none'
+          }}
+          className="mobile-overlay"
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}
+        style={{
+          width: 250,
+          minHeight: '100vh',
+          background: 'linear-gradient(180deg, #1ec287 0%, #16a970 100%)',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          boxShadow: '4px 0 20px rgba(0,0,0,0.15)',
+          zIndex: 1060,
+          display: 'flex',
+          flexDirection: 'column',
+          transition: 'transform 0.3s ease-in-out'
         }}
       >
+        {/* Header avec avatar */}
+        <div 
+          className="text-center py-4" 
+          style={{
+            background: 'rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            borderBottom: '1px solid rgba(255,255,255,0.2)'
+          }}
+        >
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <img
-            src={user.avatar || 'https://api.dicebear.com/7.x/identicon/svg?seed=default'}
+            src={user.avatar || 'https://api.dicebear.com/7.x/identicon/svg?seed=default&size=128'}
             alt="Avatar"
             style={{
               width: 80,
@@ -47,7 +100,9 @@ export default function Sidebar() {
               border: '4px solid white',
               boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
               marginBottom: 12,
-              transition: 'transform 0.3s'
+              transition: 'transform 0.3s',
+              objectFit: 'cover',
+              imageRendering: '-webkit-optimize-contrast'
             }}
             onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
             onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
@@ -84,16 +139,17 @@ export default function Sidebar() {
         >
           {user.email}
         </small>
-      </div>
+        </div>
 
-      {/* Navigation */}
-      <nav className="mt-4 flex-grow-1" style={{ paddingBottom: 20 }}>
+        {/* Navigation */}
+        <nav className="mt-4 flex-grow-1" style={{ paddingBottom: 20 }}>
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
               key={item.path}
               to={item.path}
+              onClick={() => setIsMobileMenuOpen(false)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -150,21 +206,22 @@ export default function Sidebar() {
             </Link>
           );
         })}
-      </nav>
+        </nav>
 
-      {/* Footer */}
-      <div 
-        style={{
-          padding: '16px 20px',
-          background: 'rgba(0,0,0,0.1)',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          textAlign: 'center'
-        }}
-      >
-        <small style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>
-          © 2025 FitSmash
-        </small>
+        {/* Footer */}
+        <div 
+          style={{
+            padding: '16px 20px',
+            background: 'rgba(0,0,0,0.1)',
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            textAlign: 'center'
+          }}
+        >
+          <small style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>
+            © 2025 FitSmash
+          </small>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

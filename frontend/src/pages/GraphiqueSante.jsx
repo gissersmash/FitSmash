@@ -16,7 +16,6 @@ export default function GraphiqueSante() {
     require("../services/api").setToken(token);
     getHealthEntries()
       .then((res) => {
-        console.log("Réponse API:", res); // 👈 debug
         setEntries(Array.isArray(res) ? res : res.data);
       })
       .catch((err) => {
@@ -30,7 +29,6 @@ export default function GraphiqueSante() {
     window.location.href = "/login";
     return null;
   }
-  console.log('Données pour graphique santé:', entries); // debug
   return (
     <div style={{ minHeight: "100vh", background: "#FFFBEA" }}>
       <Sidebar />

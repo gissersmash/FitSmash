@@ -17,17 +17,13 @@ export default function FoodTracker() {
       const res = await axios.get("http://localhost:4000/api/foods", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log("Réponse backend aliments :", res.data);
       setFoods(
         Array.isArray(res.data)
           ? res.data
           : res.data.foods || res.data.data || []
       );
     } catch (err) {
-      console.error(
-        "Erreur récupération aliments :",
-        err.response?.data || err.message
-      );
+      // Erreur silencieuse
     } finally {
       setLoading(false);
     }
@@ -36,7 +32,6 @@ export default function FoodTracker() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      console.error("Pas de token trouvé → redirection login");
       window.location.href = "/login";
       return;
     }
@@ -49,10 +44,7 @@ export default function FoodTracker() {
       await deleteFood(id);
       setFoods(foods.filter((f) => f.id !== id));
     } catch (err) {
-      console.error(
-        "Erreur suppression aliment :",
-        err.response?.data || err.message
-      );
+      // Erreur silencieuse
     }
   };
 
@@ -61,13 +53,9 @@ export default function FoodTracker() {
     setLoading(true);
     try {
       const results = await searchFoodsByName(searchTerm);
-      console.log("Réponse API recherche:", results);
       setFoods(Array.isArray(results) ? results : []);
     } catch (err) {
-      console.error(
-        "Erreur recherche aliments :",
-        err.response?.data || err.message
-      );
+      // Erreur silencieuse
     } finally {
       setLoading(false);
     }
@@ -324,9 +312,9 @@ export default function FoodTracker() {
                               letterSpacing: '0.5px',
                               textAlign: 'left'
                             }}>
-                              {key === 'name' ? '🍎 Aliment' : 
-                               key === 'calories' ? '🔥 Calories' :
-                               key === 'proteins' || key === 'proteines' ? '💪 Protéines' :
+                              {key === 'name' ? 'Aliment' : 
+                               key === 'calories' ? 'Calories' :
+                               key === 'proteins' || key === 'proteines' ? 'Protéines' :
                                key === 'carbs' || key === 'glucides' ? '🌾 Glucides' :
                                key === 'fats' || key === 'lipides' ? '🥑 Lipides' :
                                key}

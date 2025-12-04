@@ -75,4 +75,41 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Suppression d'un aliment spécifique
+router.delete('/:id', auth, async (req, res) => {
+  const userId = req.user.id;
+  const entryId = req.params.id;
+  
+  try {
+    const entry = await FoodEntry.findOne({ 
+      where: { 
+        id: entryId,
+        user_id: userId 
+      } 
+    });
+    
+    if (!entry) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Aliment non trouvé ou vous n\'avez pas les droits' 
+      });
+    }
+    
+    await entry.destroy();
+    
+    console.log(`✅ Aliment supprimé: ${entry.name} (ID: ${entryId})`);
+    
+    res.json({ 
+      success: true,
+      message: 'Aliment supprimé avec succès' 
+    });
+  } catch (err) {
+    console.error('❌ Erreur suppression food entry:', err);
+    res.status(500).json({ 
+      success: false,
+      message: err.message 
+    });
+  }
+});
+
 export default router;

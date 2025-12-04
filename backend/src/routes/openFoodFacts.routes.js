@@ -14,7 +14,8 @@ router.get("/search", auth, async (req, res) => {
   }
 
   // URL de l'API OpenFoodFacts avec pagination et langue française
-  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20&fields=product_name,image_url,nutriments,code`;
+  // Utilise image_small_url pour des images plus légères (200px max)
+  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20&fields=product_name,image_small_url,image_thumb_url,nutriments,code`;
 
   try {
     const apiResponse = await axios.get(url);
@@ -28,7 +29,7 @@ router.get("/search", auth, async (req, res) => {
       proteins: Math.round((p.nutriments?.proteins_100g || 0) * 10) / 10,
       carbs: Math.round((p.nutriments?.carbohydrates_100g || 0) * 10) / 10,
       fats: Math.round((p.nutriments?.fat_100g || 0) * 10) / 10,
-      image: p.image_url || null,
+      image: p.image_small_url || p.image_thumb_url || null, // Priorité aux petites images
       source: 'OpenFoodFacts'
     })).filter(p => p.calories > 0 || p.proteins > 0); // Filtrer les produits sans données nutritionnelles
 

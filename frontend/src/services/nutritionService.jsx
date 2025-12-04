@@ -37,7 +37,7 @@ export async function searchFoodsByName(query, page = 1) {
       calories: p.nutriments?.["energy-kcal_100g"] || 0,
       brand: p.brands || "N/A",
       quantity: "100g",
-      image: p.image_front_small_url || p.image_url || null, // Ajout de l'image
+      image: p.image_small_url || p.image_thumb_url || null, // Utilise les petites images
     }));
   }
   return [];

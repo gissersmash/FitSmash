@@ -30,11 +30,11 @@ function Login() {
           localStorage.setItem("token", res.data.token);
           setToken(res.data.token);
           const usernameStored = res.data.user?.username || res.data.user?.name || email.split('@')[0];
-          const avatar = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(usernameStored)}`;
+          const userAvatar = res.data.user?.avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(usernameStored)}&size=128`;
           localStorage.setItem("user", JSON.stringify({
             name: usernameStored,
             email: email,
-            avatar
+            avatar: userAvatar
           }));
           localStorage.setItem("username", usernameStored);
           navigate("/dashboard");

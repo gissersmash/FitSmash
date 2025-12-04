@@ -24,7 +24,6 @@ export default function ObjectiveForm({ onAdded }) {
       if (onAdded) onAdded();
     } catch (e) {
       alert(e.response?.data?.message || "Erreur création objectif");
-      console.error(e);
     }
   };
 

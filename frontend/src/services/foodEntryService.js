@@ -9,7 +9,6 @@ export const getFoodEntries = () => {
 };
 
 export const addFoodEntry = (foodData) => {
-  console.log("addFoodEntry appelé avec:", foodData);
   return API.post("/food-entries", foodData);
 };
 

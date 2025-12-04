@@ -8,7 +8,8 @@ export function auth(req, res, next) {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
-    req.user = { id: payload.id };
+    req.user = { id: payload.id }; // Définir req.user avec l'objet user
+    req.userId = payload.id; // Garder aussi req.userId pour compatibilité
     next();
   } catch {
     return res.status(401).json({ message: "Token invalide" });

@@ -99,7 +99,7 @@ export default function OpenFoodFactsSearch({ onFoodAdd }) {
           </div>
           <div>
             <h5 className={styles.searchTitle}>Rechercher un aliment</h5>
-            <p className={styles.searchSubtitle}>Base de données Open Food Facts - Des millions de produits</p>
+            <p className={styles.searchSubtitle}>Catalogue des aliments - Des millions de produits</p>
           </div>
         </div>
       </div>

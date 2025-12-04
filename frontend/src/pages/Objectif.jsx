@@ -29,7 +29,7 @@ export default function Objectif() {
           })));
         }
       })
-      .catch(err => console.error("Erreur récupération objectifs :", err));
+      .catch(err => {});
   }, []);
 
   // Gestion input Calories

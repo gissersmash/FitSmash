@@ -48,9 +48,39 @@ export async function login(req, res) {
     // Retourner le token + infos user
     return res.json({ 
       token, 
-      user: { id: user.id, username: user.username, email: user.email } 
+      user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar } 
     });
   } catch (e) {
     return res.status(400).json({ message: e.errors?.[0]?.message || e.message });
+  }
+}
+
+// Route de mise à jour du profil
+export async function updateProfile(req, res) {
+  try {
+    const userId = req.userId; // Fourni par le middleware auth
+    const { username, avatar } = req.body;
+
+    // Trouver l'utilisateur
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    // Mettre à jour les champs fournis
+    if (username !== undefined) user.username = username;
+    if (avatar !== undefined) user.avatar = avatar;
+
+    await user.save();
+
+    // Retourner l'utilisateur mis à jour (sans le mot de passe)
+    return res.json({ 
+      user: { 
+        id: user.id, 
+        username: user.username, 
+        email: user.email, 
+        avatar: user.avatar 
+      } 
+    });
+  } catch (e) {
+    return res.status(400).json({ message: e.message });
   }
 }

@@ -7,6 +7,7 @@ export const User = sequelize.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
+    avatar: { type: DataTypes.TEXT, allowNull: true }, // Pour stocker l'URL ou Base64 de l'avatar
 }, {
     tableName: 'users',
     timestamps: true,

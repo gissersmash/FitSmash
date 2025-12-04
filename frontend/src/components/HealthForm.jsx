@@ -19,7 +19,6 @@ export default function HealthForm({ refresh }) {
       refresh(); // pour recharger les données après ajout
     } catch (err) {
       alert("Erreur lors de l'ajout des données");
-      console.error(err);
     }
   };
 

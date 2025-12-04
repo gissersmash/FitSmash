@@ -15,7 +15,7 @@ export default function SuiviNutrition() {
       else if (Array.isArray(res.data.data)) entries = res.data.data;
       setFoodEntries(entries);
     }).catch(err => {
-      console.error("Erreur getFoodEntries :", err);
+      // Erreur silencieuse
     });
   };
 
@@ -39,7 +39,7 @@ export default function SuiviNutrition() {
         }}>
           <h5 style={{ color: '#1ec287', marginBottom: '20px', fontWeight: '600' }}>
             <i className="bi bi-search me-2"></i>
-            Ajouter des aliments (Open Food Facts)
+            Catalogue des aliments
           </h5>
           <FoodSearch onFoodAdded={refreshFoodEntries} />
         </div>
