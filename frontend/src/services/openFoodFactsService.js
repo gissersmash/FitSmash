@@ -8,18 +8,9 @@ import API from "./api";
  */
 export const searchOpenFoodFacts = async (query) => {
   try {
-    console.log('🔍 Recherche Open Food Facts pour:', query);
-    console.log('📡 URL complète:', API.defaults.baseURL + `/open-food-facts/search?q=${encodeURIComponent(query)}`);
-    
     const response = await API.get(`/open-food-facts/search?q=${encodeURIComponent(query)}`);
-    
-    console.log('✅ Réponse reçue:', response.data);
     return response.data;
   } catch (error) {
-    console.error("❌ Erreur recherche Open Food Facts:", error);
-    console.error("📄 Détails:", error.response?.data);
-    console.error("🔢 Status:", error.response?.status);
-    console.error("🔗 URL:", error.config?.url);
     throw error;
   }
 };

@@ -25,7 +25,6 @@ export default function FoodSearch({ onFoodAdded }) {
         setError(`Aucun résultat pour "${query}". Essayez : pizza, poulet, pomme, banane, pain...`);
       }
     } catch (error) {
-      console.error('Erreur recherche:', error);
       setResults([]);
       
       // Message d'erreur personnalisé

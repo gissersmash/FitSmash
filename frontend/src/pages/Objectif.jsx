@@ -81,7 +81,6 @@ export default function Objectif() {
       setLoading(false);
       window.location.href = "/dashboard";
     } catch (err) {
-      console.error("Erreur backend :", err);
       setServerError("Erreur lors de l'enregistrement côté serveur.");
       setLoading(false);
     }

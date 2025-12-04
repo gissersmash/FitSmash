@@ -31,7 +31,6 @@ export default function Register() {
 				setError(err.response.data.message);
 			} else {
 				setError("Une erreur est survenue. Vérifie le backend et la connexion.");
-				console.error(err);
 			}
 		}
 	};

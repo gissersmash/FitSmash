@@ -190,12 +190,6 @@ body.dark-mode img:not([src*="avatar"]):not([src*="logo"]) {
   filter: brightness(0.85);
 }
 
-/* Keep gradient headers visible */
-body.dark-mode [style*="background: linear-gradient(135deg, #1ec287"],
-body.dark-mode [style*="background: linear-gradient(180deg, #1ec287"] {
-  /* Keep green gradients as is */
-}
-
 /* Bootstrap specific overrides */
 body.dark-mode .container,
 body.dark-mode .container-fluid {

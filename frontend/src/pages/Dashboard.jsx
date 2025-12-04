@@ -50,7 +50,7 @@ export default function Dashboard() {
       else if (Array.isArray(res.data.data)) entries = res.data.data;
       setFoodEntries(entries);
     } catch (err) {
-      console.error("Erreur getFoodEntries :", err.response?.data || err.message);
+      // Erreur silencieuse
     }
   };
 
@@ -64,7 +64,6 @@ export default function Dashboard() {
       refreshGoals();
       showNotification('success', `"${entry.name || entry.foodName}" supprimé avec succès`);
     } catch (err) {
-      console.error("❌ Erreur suppression:", err);
       showNotification('error', err.response?.data?.message || 'Impossible de supprimer');
     }
   };
@@ -98,7 +97,6 @@ export default function Dashboard() {
       refreshGoals();
       showNotification('success', `${payload.name} ajouté !`, `${payload.quantity || 100}g • ${payload.calories} kcal`);
     } catch (err) {
-      console.error("❌ Erreur ajout entrée alimentaire:", err);
       showNotification('error', err.response?.data?.message || err.message || 'Impossible d\'ajouter');
     }
   };

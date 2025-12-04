@@ -22,9 +22,7 @@ function Login() {
     try {
       if (isLogin) {
         // Connexion
-        console.log("Tentative de login avec :", { email, password });
         const res = await login({ email, password });
-        console.log("Réponse backend login :", res.data);
 
         if (res?.data?.token) {
           localStorage.setItem("token", res.data.token);
@@ -66,7 +64,6 @@ function Login() {
         setConfirmPassword("");
       }
     } catch (err) {
-      console.error("Erreur API :", err.response?.data);
       setError(err.response?.data?.message || "Erreur réseau");
     } finally {
       setLoading(false);

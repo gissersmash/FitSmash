@@ -52,7 +52,6 @@ export default function OpenFoodFactsSearch({ onFoodAdd }) {
         setError(`Aucun résultat pour "${query}"`);
       }
     } catch (err) {
-      console.error('Erreur recherche:', err);
       setError('Erreur lors de la recherche. Veuillez réessayer.');
       setResults([]);
     } finally {
@@ -77,10 +76,9 @@ export default function OpenFoodFactsSearch({ onFoodAdd }) {
         };
         
         await onFoodAdd(adjustedFood);
-        console.log(`✅ Aliment ajouté depuis Open Food Facts: ${food.name} (${quantity}g)`);
       }
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ajout:', error);
+      // Erreur silencieuse
     }
   };
 
