@@ -84,3 +84,102 @@ export async function updateProfile(req, res) {
     return res.status(400).json({ message: e.message });
   }
 }
+
+// Route mot de passe oublié
+export async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email requis" });
+    }
+
+    // Vérifier si l'utilisateur existe
+    const user = await User.findOne({ where: { email } });
+    
+    if (!user) {
+      // Pour des raisons de sécurité, on ne révèle pas si l'email existe ou non
+      return res.json({ 
+        message: "Si cet email existe, un lien de réinitialisation a été envoyé" 
+      });
+    }
+
+    // Générer un token de réinitialisation (valide 1h)
+    const resetToken = jwt.sign(
+      { id: user.id, type: 'reset' }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: "1h" }
+    );
+
+    // Dans un vrai projet, on enverrait un email ici
+    // Pour l'instant, on simule juste l'envoi
+    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+    
+    console.log(`📧 Lien de réinitialisation pour ${email}: ${resetLink}`);
+    
+    // En production, utiliser un service d'email comme:
+    // - Nodemailer avec Gmail/SMTP
+    // - SendGrid
+    // - AWS SES
+    // await sendEmail(email, 'Réinitialisation mot de passe', resetLink);
+
+    return res.json({ 
+      message: "Si cet email existe, un lien de réinitialisation a été envoyé",
+      // Pour dev uniquement, à retirer en production
+      resetLink: process.env.NODE_ENV === 'development' ? resetLink : undefined
+    });
+  } catch (e) {
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+}
+
+// Route réinitialisation du mot de passe
+export async function resetPassword(req, res) {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: "Token et nouveau mot de passe requis" });
+    }
+
+    // Vérifier et décoder le token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      // Vérifier que c'est bien un token de réinitialisation
+      if (decoded.type !== 'reset') {
+        return res.status(400).json({ message: "Token invalide" });
+      }
+    } catch (err) {
+      return res.status(400).json({ message: "Token invalide ou expiré" });
+    }
+
+    // Trouver l'utilisateur
+    const user = await User.findByPk(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    // Valider le nouveau mot de passe
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({ 
+        message: "Le mot de passe doit contenir au moins 8 caractères, dont une lettre et un chiffre" 
+      });
+    }
+
+    // Hasher et sauvegarder le nouveau mot de passe
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    console.log(`✅ Mot de passe réinitialisé pour ${user.email}`);
+
+    return res.json({ 
+      message: "Mot de passe réinitialisé avec succès" 
+    });
+  } catch (e) {
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+}

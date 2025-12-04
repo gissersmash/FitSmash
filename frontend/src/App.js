@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { useDarkMode } from "./hooks/useDarkMode";
 import Login from "./pages/Login.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import TableauSuivi from "./pages/TableauSuivi.jsx";
 import GraphiqueSante from "./pages/GraphiqueSante.jsx";
@@ -28,6 +29,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tableau-suivi" element={<TableauSuivi />} />
           <Route path="/graphique-sante" element={<GraphiqueSante />} />
