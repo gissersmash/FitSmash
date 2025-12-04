@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 import '../styles/Sidebar.css';
 
 export default function Sidebar() {
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem('user')) || { name: 'Utilisateur' };
+  const { t } = useTranslation();
+  const user = JSON.parse(localStorage.getItem('user')) || { name: t('dashboard.welcome') };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { path: '/dashboard', icon: 'bi-house-door', label: 'Accueil' },
-    { path: '/tableau-suivi', icon: 'bi-table', label: 'Tableau de suivi' },
-    { path: '/graphique-sante', icon: 'bi-graph-up', label: 'Graphique santé' },
-    { path: '/objectif', icon: 'bi-bullseye', label: 'Objectif' },
-    { path: '/abonnement', icon: 'bi-star', label: 'Abonnement' },
-    { path: '/contact', icon: 'bi-envelope-heart', label: 'Contact' },
-    { path: '/parametres', icon: 'bi-gear-fill', label: 'Paramètres' }
+    { path: '/dashboard', icon: 'bi-house-door', label: t('nav.dashboard') },
+    { path: '/tableau-suivi', icon: 'bi-table', label: t('health.table') },
+    { path: '/graphique-sante', icon: 'bi-graph-up', label: t('health.chart') },
+    { path: '/objectif', icon: 'bi-bullseye', label: t('nav.objectives') },
+    { path: '/abonnement', icon: 'bi-star', label: t('nav.subscription') },
+    { path: '/contact', icon: 'bi-envelope-heart', label: t('nav.contact') },
+    { path: '/parametres', icon: 'bi-gear-fill', label: t('nav.settings') }
   ];
 
   return (

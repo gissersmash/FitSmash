@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { getFoodEntries } from '../services/foodEntryService';
+import { useTranslation } from '../hooks/useTranslation';
 import { setToken } from "../services/api";
 import Sidebar from '../components/Sidebar';
 import CaloriesDonutChart from '../components/CaloriesDonutChart';
@@ -15,9 +16,9 @@ import { showNotification } from '../utils/notifications';
 import styles from '../styles/Dashboard.module.css';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const isAuthenticated = !!localStorage.getItem('token');
   const [foodEntries, setFoodEntries] = useState([]);
-  const [allGoals, setAllGoals] = useState([]);
   const [objectif, setObjectif] = useState(0);
   const [foods, setFoods] = useState([]);
   const [foodsLoading, setFoodsLoading] = useState(false);
@@ -33,11 +34,10 @@ export default function Dashboard() {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
       const goals = Array.isArray(res.data) ? res.data : Array.isArray(res.data.goals) ? res.data.goals : Array.isArray(res.data.data) ? res.data.data : [];
-      setAllGoals(goals);
       const goal = goals.find(g => g.type && g.type.toLowerCase() === 'calories');
       if (goal) setObjectif(goal.value);
-    }).catch(err => {
-      console.error("Erreur récupération objectifs :", err.response?.data || err.message);
+    }).catch(() => {
+      // Erreur silencieuse
     });
   };
 
@@ -62,9 +62,9 @@ export default function Dashboard() {
       });
       await refreshFoodEntries();
       refreshGoals();
-      showNotification('success', `"${entry.name || entry.foodName}" supprimé avec succès`);
+      showNotification('success', `"${entry.name || entry.foodName}" ${t('food.deleted')}`);
     } catch (err) {
-      showNotification('error', err.response?.data?.message || 'Impossible de supprimer');
+      showNotification('error', err.response?.data?.message || t('food.errorDeleting'));
     }
   };
 
@@ -95,9 +95,9 @@ export default function Dashboard() {
       });
       await refreshFoodEntries();
       refreshGoals();
-      showNotification('success', `${payload.name} ajouté !`, `${payload.quantity || 100}g • ${payload.calories} kcal`);
+      showNotification('success', `${payload.name} ${t('food.added')}`, `${payload.quantity || 100}g • ${payload.calories} kcal`);
     } catch (err) {
-      showNotification('error', err.response?.data?.message || err.message || 'Impossible d\'ajouter');
+      showNotification('error', err.response?.data?.message || err.message || t('food.errorAdding'));
     }
   };
 

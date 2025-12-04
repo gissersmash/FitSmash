@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
+import { useTranslation } from '../hooks/useTranslation';
 import styles from '../styles/Parametres.module.css';
 
 export default function Parametres() {
+  const { t, changeLanguage } = useTranslation();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || { name: 'Utilisateur', email: '', avatar: '' });
   const [newName, setNewName] = useState(user.name);
   const [newAvatar, setNewAvatar] = useState(user.avatar || '');
@@ -10,7 +12,6 @@ export default function Parametres() {
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'fr');
   const [activeTab, setActiveTab] = useState('profile');
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
-  const [uploadedImage, setUploadedImage] = useState(null);
 
   useEffect(() => {
     // Load dark mode preference on component mount
@@ -38,20 +39,20 @@ export default function Parametres() {
     const updatedUser = { ...user, name: newName, avatar: newAvatar };
     localStorage.setItem('user', JSON.stringify(updatedUser));
     setUser(updatedUser);
-    showNotification('Profil mis à jour avec succès !');
+    showNotification(t('settings.profileUpdated'));
   };
 
   const handleToggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
     localStorage.setItem('darkMode', newMode);
-    showNotification(newMode ? 'Mode sombre activé' : 'Mode clair activé');
+    showNotification(newMode ? t('settings.darkModeEnabled') : t('settings.lightModeEnabled'));
   };
 
   const handleChangeLanguage = (lang) => {
     setLanguage(lang);
-    localStorage.setItem('language', lang);
-    showNotification(lang === 'fr' ? 'Langue: Français' : 'Language: English');
+    changeLanguage(lang);
+    showNotification(t('settings.languageChanged'));
   };
 
   const handleImageUpload = (e) => {
@@ -59,21 +60,20 @@ export default function Parametres() {
     if (file) {
       // Vérifier le type de fichier
       if (!file.type.startsWith('image/')) {
-        showNotification('Veuillez sélectionner une image valide', 'error');
+        showNotification(t('settings.errorImageType'), 'error');
         return;
       }
       
       // Vérifier la taille (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        showNotification('L\'image est trop volumineuse (max 5MB)', 'error');
+        showNotification(t('settings.errorImageSize'), 'error');
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
         setNewAvatar(reader.result);
-        setUploadedImage(reader.result);
-        showNotification('Image chargée avec succès !');
+        showNotification(t('settings.imageUploaded'));
       };
       reader.readAsDataURL(file);
     }
@@ -112,7 +112,7 @@ export default function Parametres() {
               <i className="bi bi-gear-fill"></i>
             </div>
             <div>
-              <h1 className={styles.headerTitle}>Paramètres</h1>
+              <h1 className={styles.headerTitle}>{t('settings.title')}</h1>
               <p className={styles.headerSubtitle}>Personnalisez votre expérience FitSmash</p>
             </div>
           </div>
@@ -125,21 +125,21 @@ export default function Parametres() {
             onClick={() => setActiveTab('profile')}
           >
             <i className="bi bi-person-circle"></i>
-            <span>Profil</span>
+            <span>{t('settings.profile')}</span>
           </button>
           <button 
             className={`${styles.tab} ${activeTab === 'appearance' ? styles.tabActive : ''}`}
             onClick={() => setActiveTab('appearance')}
           >
             <i className="bi bi-palette"></i>
-            <span>Apparence</span>
+            <span>{t('settings.appearance')}</span>
           </button>
           <button 
             className={`${styles.tab} ${activeTab === 'language' ? styles.tabActive : ''}`}
             onClick={() => setActiveTab('language')}
           >
             <i className="bi bi-translate"></i>
-            <span>Langue</span>
+            <span>{t('settings.language')}</span>
           </button>
         </div>
 
@@ -149,7 +149,7 @@ export default function Parametres() {
           {activeTab === 'profile' && (
             <div className={styles.section}>
               <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Informations du profil</h2>
+                <h2 className={styles.sectionTitle}>{t('settings.myProfile')}</h2>
                 <p className={styles.sectionSubtitle}>Modifiez votre avatar et votre nom d'utilisateur</p>
               </div>
 
@@ -157,7 +157,7 @@ export default function Parametres() {
               <div className={styles.card}>
                 <h3 className={styles.cardTitle}>
                   <i className="bi bi-image me-2"></i>
-                  Photo de profil
+                  {t('settings.avatar')}
                 </h3>
                 <div className={styles.currentAvatar}>
                   <img src={newAvatar || 'https://api.dicebear.com/7.x/identicon/svg?seed=default&size=128'} alt="Avatar actuel" />
@@ -187,12 +187,12 @@ export default function Parametres() {
                 <div className={styles.customAvatarInput}>
                   <label className={styles.inputLabel}>
                     <i className="bi bi-upload me-2"></i>
-                    Importer depuis votre ordinateur
+                    {t('settings.uploadImage')}
                   </label>
                   <div className={styles.uploadContainer}>
                     <label htmlFor="file-upload" className={styles.uploadButton}>
                       <i className="bi bi-cloud-upload me-2"></i>
-                      Choisir une image
+                      {t('settings.chooseFile')}
                     </label>
                     <input
                       id="file-upload"
@@ -224,14 +224,14 @@ export default function Parametres() {
               <div className={styles.card}>
                 <h3 className={styles.cardTitle}>
                   <i className="bi bi-person-badge me-2"></i>
-                  Nom d'utilisateur
+                  {t('settings.username')}
                 </h3>
                 <div className={styles.inputGroup}>
-                  <label className={styles.inputLabel}>Pseudo</label>
+                  <label className={styles.inputLabel}>{t('settings.username')}</label>
                   <input 
                     type="text"
                     className={styles.input}
-                    placeholder="Votre pseudo"
+                    placeholder={t('settings.username')}
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                   />
@@ -240,7 +240,7 @@ export default function Parametres() {
 
               <button className={styles.saveButton} onClick={handleSaveProfile}>
                 <i className="bi bi-check-circle me-2"></i>
-                Enregistrer les modifications
+                {t('settings.saveProfile')}
               </button>
             </div>
           )}
@@ -249,7 +249,7 @@ export default function Parametres() {
           {activeTab === 'appearance' && (
             <div className={styles.section}>
               <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Apparence</h2>
+                <h2 className={styles.sectionTitle}>{t('settings.appearance')}</h2>
                 <p className={styles.sectionSubtitle}>Personnalisez l'interface selon vos préférences</p>
               </div>
 
@@ -260,9 +260,9 @@ export default function Parametres() {
                       <i className="bi bi-moon-stars-fill"></i>
                     </div>
                     <div>
-                      <h3 className={styles.settingTitle}>Mode sombre</h3>
+                      <h3 className={styles.settingTitle}>{t('settings.darkMode')}</h3>
                       <p className={styles.settingDescription}>
-                        Activez le thème sombre pour réduire la fatigue oculaire
+                        {t('settings.darkModeDesc')}
                       </p>
                     </div>
                   </div>
@@ -290,8 +290,8 @@ export default function Parametres() {
           {activeTab === 'language' && (
             <div className={styles.section}>
               <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Langue</h2>
-                <p className={styles.sectionSubtitle}>Choisissez votre langue préférée</p>
+                <h2 className={styles.sectionTitle}>{t('settings.language')}</h2>
+                <p className={styles.sectionSubtitle}>{t('settings.selectLanguage')}</p>
               </div>
 
               <div className={styles.card}>
@@ -301,7 +301,7 @@ export default function Parametres() {
                 >
                   <div className={styles.languageFlag}>🇫🇷</div>
                   <div className={styles.languageInfo}>
-                    <div className={styles.languageName}>Français</div>
+                    <div className={styles.languageName}>{t('settings.french')}</div>
                     <div className={styles.languageCode}>FR</div>
                   </div>
                   {language === 'fr' && (
@@ -317,7 +317,7 @@ export default function Parametres() {
                 >
                   <div className={styles.languageFlag}>🇬🇧</div>
                   <div className={styles.languageInfo}>
-                    <div className={styles.languageName}>English</div>
+                    <div className={styles.languageName}>{t('settings.english')}</div>
                     <div className={styles.languageCode}>EN</div>
                   </div>
                   {language === 'en' && (

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../services/authService";
 import { setToken } from "../services/api";
+import { useTranslation } from "../hooks/useTranslation";
 
 function Login() {
+  const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -42,21 +44,19 @@ function Login() {
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=]{8,}$/;
 
         if (password !== confirmPassword) {
-          setError("Les mots de passe ne correspondent pas.");
+          setError(t('auth.passwordMismatch') || "Les mots de passe ne correspondent pas.");
           setLoading(false);
           return;
         }
         if (!passwordRegex.test(password)) {
-          setError("Le mot de passe doit contenir au moins 8 caractères, dont une lettre et un chiffre.");
+          setError(t('auth.passwordRequirements') || "Le mot de passe doit contenir au moins 8 caractères, dont une lettre et un chiffre.");
           setLoading(false);
           return;
         }
 
-        console.log("Tentative d'inscription avec :", { username, email, password });
         const res = await register({ username, email, password });
-        console.log("Réponse backend register :", res.data);
 
-        alert("✅ Inscription réussie ! Connectez-vous maintenant.");
+        alert(t('auth.registerSuccess'));
         setIsLogin(true);
         setUsername(""); 
         setEmail(""); 
@@ -64,7 +64,7 @@ function Login() {
         setConfirmPassword("");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur réseau");
+      setError(err.response?.data?.message || t('auth.errorNetwork'));
     } finally {
       setLoading(false);
     }
@@ -142,7 +142,7 @@ function Login() {
             margin: 0,
             fontWeight: '500'
           }}>
-            {isLogin ? 'Connectez-vous pour suivre vos calories' : 'Rejoignez FitSmash dès maintenant'}
+            {isLogin ? (t('loginDesc') || 'Connectez-vous pour suivre vos calories') : (t('registerDesc') || 'Rejoignez FitSmash dès maintenant')}
           </p>
         </div>
 
@@ -165,11 +165,11 @@ function Login() {
                 fontSize: '14px'
               }}>
                 <i className="bi bi-person-circle me-2" style={{ color: '#1ec287' }}></i>
-                Nom d'utilisateur
+                {t('username')}
               </label>
               <input
                 type="text"
-                placeholder="Votre nom"
+                placeholder={t('yourName') || "Votre nom"}
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 required
@@ -198,7 +198,7 @@ function Login() {
               fontSize: '14px'
             }}>
               <i className="bi bi-envelope-fill me-2" style={{ color: '#1ec287' }}></i>
-              Email
+              {t('email')}
             </label>
             <input
               type="email"
@@ -230,7 +230,7 @@ function Login() {
               fontSize: '14px'
             }}>
               <i className="bi bi-lock-fill me-2" style={{ color: '#1ec287' }}></i>
-              Mot de passe
+              {t('password')}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -283,7 +283,7 @@ function Login() {
                 fontSize: '14px'
               }}>
                 <i className="bi bi-shield-lock-fill me-2" style={{ color: '#1ec287' }}></i>
-                Confirmez le mot de passe
+                {t('confirmPassword')}
               </label>
               <input
                 type={showPassword ? "text" : "password"}
