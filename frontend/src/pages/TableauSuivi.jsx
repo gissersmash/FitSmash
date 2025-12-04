@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import HealthTable from "../components/HealthTable";
+import ActivitySearch from "../components/ActivitySearch";
 import { getHealthEntries, addHealthEntry, deleteHealthEntry, getStats } from "../services/healthService";
 import { setToken } from "../services/api";
+import axios from "axios";
+import { showNotification } from "../utils/notifications";
 
 export default function TableauSuivi() {
   const [entries, setEntries] = useState([]);
-  const [newEntry, setNewEntry] = useState({ weight: "", sleep_hours: "", activity_minutes: "", activity_type: "" });
+  const [newEntry, setNewEntry] = useState({ weight: "", sleep_hours: "" });
   const [period, setPeriod] = useState("week");
   const [stats, setStats] = useState([]);
+  const [activeTab, setActiveTab] = useState("health"); // "health" ou "activities"
+  const [activities, setActivities] = useState([]);
+  const [activityTypes, setActivityTypes] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState("");
+  const [duration, setDuration] = useState("");
+  const [weight, setWeight] = useState(localStorage.getItem("userWeight") || "70");
+  const [activityDate, setActivityDate] = useState(new Date().toISOString().split('T')[0]);
+  const [notes, setNotes] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("Tous");
+
+  const token = localStorage.getItem("token");
 
   // Récupération des entrées santé
   const fetchEntries = async () => {
@@ -30,6 +44,30 @@ export default function TableauSuivi() {
     }
   };
 
+  // Récupération des activités
+  const fetchActivities = async () => {
+    try {
+      const res = await axios.get("http://localhost:4000/api/activities", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setActivities(res.data.activities || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Récupération des types d'activités
+  const fetchActivityTypes = async () => {
+    try {
+      const res = await axios.get("http://localhost:4000/api/activities/types", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setActivityTypes(res.data.activities || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return window.location.href = "/login";
@@ -37,6 +75,8 @@ export default function TableauSuivi() {
     setToken(token);
     fetchEntries();
     fetchStats(period);
+    fetchActivities();
+    fetchActivityTypes();
   }, []);
 
   useEffect(() => {
@@ -51,11 +91,9 @@ export default function TableauSuivi() {
       await addHealthEntry({
         weight: parseFloat(newEntry.weight),
         sleep: parseFloat(newEntry.sleep_hours),
-        activity: parseFloat(newEntry.activity_minutes),
-        activity_type: newEntry.activity_type,
         date: new Date()
       });
-      setNewEntry({ weight: "", sleep_hours: "", activity_minutes: "", activity_type: "" });
+      setNewEntry({ weight: "", sleep_hours: "" });
       fetchEntries();
       fetchStats(period);
     } catch (err) {
@@ -73,6 +111,61 @@ export default function TableauSuivi() {
     }
   };
 
+  const handleAddActivity = async (e) => {
+    e.preventDefault();
+    if (!selectedActivity || !duration) {
+      showNotification("error", "Veuillez sélectionner une activité et une durée");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:4000/api/activities",
+        {
+          name: selectedActivity,
+          duration: parseInt(duration),
+          weight: parseFloat(weight),
+          date: activityDate,
+          notes
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      showNotification("success", res.data.message || "Activité ajoutée !");
+      fetchActivities();
+      setSelectedActivity("");
+      setDuration("");
+      setNotes("");
+      localStorage.setItem("userWeight", weight);
+    } catch (err) {
+      showNotification("error", err.response?.data?.message || "Erreur lors de l'ajout");
+    }
+  };
+
+  const handleDeleteActivity = async (id) => {
+    try {
+      await axios.delete(`http://localhost:4000/api/activities/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showNotification("success", "Activité supprimée");
+      fetchActivities();
+    } catch (err) {
+      showNotification("error", "Erreur lors de la suppression");
+    }
+  };
+
+  const handleActivitySelect = (activity) => {
+    setSelectedActivity(activity.name);
+    setDuration(activity.duration.toString());
+    // Les calories seront automatiquement calculées par l'API lors de l'ajout
+  };
+
+  const totalCaloriesBurned = activities.reduce((sum, a) => sum + (a.calories_burned || 0), 0);
+  const categories = ["Tous", "Cardio", "Fitness", "Sports collectifs", "Sports de combat", "Autres"];
+  const filteredTypes = categoryFilter === "Tous" 
+    ? activityTypes 
+    : activityTypes.filter(a => a.category === categoryFilter);
+
   return (
     <div style={{ minHeight: "100vh", background: "#FFFBEA" }}>
       <Sidebar />
@@ -83,6 +176,46 @@ export default function TableauSuivi() {
             Tableau de suivi
           </h3>
 
+          {/* Onglets */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', justifyContent: 'center' }}>
+            <button
+              onClick={() => setActiveTab("health")}
+              style={{
+                padding: '12px 32px',
+                borderRadius: '12px',
+                border: 'none',
+                background: activeTab === "health" ? 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)' : 'white',
+                color: activeTab === "health" ? 'white' : '#666',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: activeTab === "health" ? '0 4px 12px rgba(30, 194, 135, 0.3)' : 'none'
+              }}
+            >
+              <i className="bi bi-heart-pulse me-2"></i>
+              Données Santé
+            </button>
+            <button
+              onClick={() => setActiveTab("activities")}
+              style={{
+                padding: '12px 32px',
+                borderRadius: '12px',
+                border: 'none',
+                background: activeTab === "activities" ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'white',
+                color: activeTab === "activities" ? 'white' : '#666',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: activeTab === "activities" ? '0 4px 12px rgba(239, 68, 68, 0.3)' : 'none'
+              }}
+            >
+              <i className="bi bi-activity me-2"></i>
+              Activités Physiques
+            </button>
+          </div>
+
+          {activeTab === "health" && (
+            <>
           {/* Statistiques rapides */}
           <div className="row mb-4">
             <div className="col-md-4">
@@ -162,7 +295,7 @@ export default function TableauSuivi() {
             </h5>
             <form onSubmit={handleAddEntry}>
               <div className="row g-3">
-                <div className="col-md-3">
+                <div className="col-md-6">
                   <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Poids (kg)</label>
                   <input
                     name="weight"
@@ -181,7 +314,7 @@ export default function TableauSuivi() {
                     }}
                   />
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-6">
                   <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Sommeil (h)</label>
                   <input
                     name="sleep_hours"
@@ -199,82 +332,6 @@ export default function TableauSuivi() {
                       fontSize: '14px'
                     }}
                   />
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Activité (min)</label>
-                  <input
-                    name="activity_minutes"
-                    type="number"
-                    className="form-control"
-                    placeholder="Ex: 45"
-                    value={newEntry.activity_minutes}
-                    onChange={handleInputChange}
-                    required
-                    style={{
-                      borderRadius: '10px',
-                      border: '2px solid #e5e7eb',
-                      padding: '10px 14px',
-                      fontSize: '14px'
-                    }}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Type d'activité</label>
-                  <select
-                    name="activity_type"
-                    className="form-select"
-                    value={newEntry.activity_type}
-                    onChange={handleInputChange}
-                    required
-                    style={{
-                      borderRadius: '10px',
-                      border: '2px solid #e5e7eb',
-                      padding: '10px 14px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    <option value="">Choisir...</option>
-                    <option value="Course à pied">Course à pied</option>
-                    <option value="Vélo">🚴 Vélo</option>
-                    <option value="Natation">🏊 Natation</option>
-                    <option value="Marche">🚶 Marche</option>
-                    <option value="Musculation">Musculation</option>
-                    <option value="Yoga">Yoga</option>
-                    <option value="Fitness">🤸 Fitness</option>
-                    <option value="Tennis">🎾 Tennis</option>
-                    <option value="Football">⚽ Football</option>
-                    <option value="Basketball">🏀 Basketball</option>
-                    <option value="Boxe">🥊 Boxe</option>
-                    <option value="Danse">💃 Danse</option>
-                    <option value="Escalade">🧗 Escalade</option>
-                    <option value="Randonnée">🥾 Randonnée</option>
-                    <option value="Ski">⛷️ Ski</option>
-                    <option value="Rugby">🏉 Rugby</option>
-                    <option value="Badminton">🏸 Badminton</option>
-                    <option value="Crossfit">🏋️ Crossfit</option>
-                    <option value="Pilates">Pilates</option>
-                    <option value="Arts martiaux">🥋 Arts martiaux</option>
-                    <option value="Golf">⛳ Golf</option>
-                    <option value="Aviron">🚣 Aviron</option>
-                    <option value="Roller">⛸️ Roller</option>
-                    <option value="Skateboard">🛹 Skateboard</option>
-                    <option value="Surf">🏄 Surf</option>
-                    <option value="Plongée">🤿 Plongée</option>
-                    <option value="Equitation">🏇 Equitation</option>
-                    <option value="Volley">🏐 Volley</option>
-                    <option value="Handball">🤾 Handball</option>
-                    <option value="Triathlon">Triathlon</option>
-                    <option value="Marathon">Marathon</option>
-                    <option value="Trail">Trail</option>
-                    <option value="Canoë">🛶 Canoë</option>
-                    <option value="Snowboard">🏂 Snowboard</option>
-                    <option value="Patinage">⛸️ Patinage</option>
-                    <option value="Spinning">Spinning</option>
-                    <option value="HIIT">HIIT</option>
-                    <option value="Stretching">Stretching</option>
-                    <option value="Zumba">Zumba</option>
-                    <option value="Aquagym">Aquagym</option>
-                  </select>
                 </div>
               </div>
               <div className="text-end mt-3">
@@ -382,6 +439,268 @@ export default function TableauSuivi() {
             </h5>
             <HealthTable entries={stats} onDelete={handleDelete} showActions={false} />
           </div>
+          </>
+          )}
+
+          {/* Onglet Activités */}
+          {activeTab === "activities" && (
+            <>
+              {/* Statistiques activités */}
+              <div className="row mb-4">
+                <div className="col-md-4">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+                  }}>
+                    <i className="bi bi-fire" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{Math.round(totalCaloriesBurned)}</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Calories brûlées</div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                  }}>
+                    <i className="bi bi-clock" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                      {activities.reduce((sum, a) => sum + (a.duration || 0), 0)}
+                    </div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Minutes d'activité</div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(30, 194, 135, 0.3)'
+                  }}>
+                    <i className="bi bi-check-circle" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{activities.length}</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Activités réalisées</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Formulaire ajout activité */}
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '24px',
+                marginBottom: '24px',
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+              }}>
+                <h5 style={{ color: '#ef4444', marginBottom: '20px', fontWeight: '600' }}>
+                  <i className="bi bi-plus-circle-fill me-2"></i>
+                  Ajouter une activité
+                </h5>
+
+                {/* Recherche d'activités via API Ninjas */}
+                <ActivitySearch 
+                  onActivitySelect={handleActivitySelect}
+                  weight={parseFloat(weight)}
+                  duration={parseInt(duration) || 60}
+                />
+
+                {/* Divider */}
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  margin: '20px 0',
+                  gap: '10px'
+                }}>
+                  <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
+                  <span style={{ fontSize: '13px', color: '#9ca3af', fontWeight: '500' }}>
+                    OU sélectionnez dans la liste
+                  </span>
+                  <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
+                </div>
+
+                <form onSubmit={handleAddActivity}>
+                  <div className="row g-3">
+                    <div className="col-md-4">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Catégorie</label>
+                      <select
+                        className="form-select"
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        style={{ borderRadius: '10px', border: '2px solid #e5e7eb', padding: '10px 14px' }}
+                      >
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-md-8">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Activité *</label>
+                      <select
+                        className="form-select"
+                        value={selectedActivity}
+                        onChange={(e) => setSelectedActivity(e.target.value)}
+                        required
+                        style={{ borderRadius: '10px', border: '2px solid #e5e7eb', padding: '10px 14px' }}
+                      >
+                        <option value="">Sélectionner...</option>
+                        {filteredTypes.map((activity) => (
+                          <option key={activity.name} value={activity.name}>
+                            {activity.name} ({activity.met} MET)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-md-3">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Durée (min) *</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={duration}
+                        onChange={(e) => setDuration(e.target.value)}
+                        min="1"
+                        required
+                        style={{ borderRadius: '10px', border: '2px solid #e5e7eb', padding: '10px 14px' }}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Poids (kg)</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={weight}
+                        onChange={(e) => setWeight(e.target.value)}
+                        min="30"
+                        max="200"
+                        step="0.1"
+                        style={{ borderRadius: '10px', border: '2px solid #e5e7eb', padding: '10px 14px' }}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Date</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={activityDate}
+                        onChange={(e) => setActivityDate(e.target.value)}
+                        style={{ borderRadius: '10px', border: '2px solid #e5e7eb', padding: '10px 14px' }}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>&nbsp;</label>
+                      <button
+                        type="submit"
+                        className="btn w-100"
+                        style={{
+                          background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                          color: 'white',
+                          fontWeight: 'bold',
+                          padding: '10px',
+                          borderRadius: '10px',
+                          border: 'none'
+                        }}
+                      >
+                        <i className="bi bi-plus-lg me-2"></i>
+                        Ajouter
+                      </button>
+                    </div>
+                    <div className="col-12">
+                      <label className="form-label" style={{ fontSize: '13px', fontWeight: '600', color: '#666' }}>Notes (optionnel)</label>
+                      <textarea
+                        className="form-control"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        rows="2"
+                        placeholder="Commentaires sur votre activité..."
+                        style={{ borderRadius: '10px', border: '2px solid #e5e7eb', padding: '10px 14px' }}
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              {/* Tableau des activités */}
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+              }}>
+                <h5 style={{ color: '#ef4444', marginBottom: '20px', fontWeight: '600' }}>
+                  <i className="bi bi-list-ul me-2"></i>
+                  Historique des activités
+                </h5>
+
+                {activities.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                    <i className="bi bi-inbox" style={{ fontSize: '48px', marginBottom: '16px', display: 'block' }}></i>
+                    <p>Aucune activité enregistrée</p>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-hover">
+                      <thead style={{ background: '#f8f9fa' }}>
+                        <tr>
+                          <th>Date</th>
+                          <th>Activité</th>
+                          <th>Durée</th>
+                          <th>Calories</th>
+                          <th>Notes</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activities.map((activity) => (
+                          <tr key={activity.id}>
+                            <td>{new Date(activity.date).toLocaleDateString('fr-FR')}</td>
+                            <td>
+                              <strong>{activity.name}</strong>
+                              <br />
+                              <small style={{ color: '#666' }}>{activity.met_value} MET</small>
+                            </td>
+                            <td>{activity.duration} min</td>
+                            <td>
+                              <span style={{ 
+                                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                color: 'white',
+                                padding: '4px 12px',
+                                borderRadius: '8px',
+                                fontWeight: 'bold',
+                                fontSize: '13px'
+                              }}>
+                                <i className="bi bi-fire me-1"></i>
+                                {Math.round(activity.calories_burned)}
+                              </span>
+                            </td>
+                            <td style={{ maxWidth: '200px', fontSize: '13px', color: '#666' }}>
+                              {activity.notes || '-'}
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-sm btn-danger"
+                                onClick={() => handleDeleteActivity(activity.id)}
+                                style={{ borderRadius: '8px' }}
+                              >
+                                <i className="bi bi-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

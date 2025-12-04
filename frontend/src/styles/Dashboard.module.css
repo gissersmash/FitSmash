@@ -75,6 +75,14 @@
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
 }
 
+.statsIconOrange {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.statsIconPurple {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+}
+
 .statsIconRed {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
@@ -107,6 +115,14 @@
 
 .statsValueBlue {
   color: #3b82f6;
+}
+
+.statsValueOrange {
+  color: #f97316;
+}
+
+.statsValuePurple {
+  color: #a855f7;
 }
 
 .statsValueRed {
