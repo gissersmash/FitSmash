@@ -22,7 +22,8 @@ const HealthEntry = sequelize.define("HealthEntry", {
   },
   activity: {
     type: DataTypes.FLOAT, // minutes d'activité
-    allowNull: false,
+    allowNull: true, // Maintenant optionnel
+    defaultValue: 0,
   },
   activity_type: {
     type: DataTypes.STRING,

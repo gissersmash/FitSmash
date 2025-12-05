@@ -8,12 +8,12 @@ export async function addHealthEntry(req, res) {
     const { weight, sleep, activity, date, activity_type } = req.body;
 
     const entry = await HealthEntry.create({
-      user_id: req.user.id, // l’ID vient du middleware auth
+      user_id: req.user.id, // l'ID vient du middleware auth
       weight,
       sleep,
-      activity,
+      activity: activity || 0, // Valeur par défaut 0 si non fourni
       date: new Date(date),
-      activity_type, // Ajout du champ activity_type
+      activity_type: activity_type || null, // Optionnel
     });
 
     res.status(201).json(entry);

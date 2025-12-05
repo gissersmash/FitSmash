@@ -75,30 +75,6 @@ export default function HealthTable({ entries, onDelete, showActions = true }) {
               <i className="bi bi-moon-stars me-2"></i>
               Sommeil (h)
             </th>
-            <th style={{
-              padding: '14px 16px',
-              fontSize: '13px',
-              fontWeight: '700',
-              color: '#666',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              border: 'none'
-            }}>
-              <i className="bi bi-activity me-2"></i>
-              Activité (min)
-            </th>
-            <th style={{
-              padding: '14px 16px',
-              fontSize: '13px',
-              fontWeight: '700',
-              color: '#666',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              border: 'none'
-            }}>
-              <i className="bi bi-tag me-2"></i>
-              Type d'activité
-            </th>
             {showActions && (
               <th style={{
                 padding: '14px 16px',
@@ -161,39 +137,6 @@ export default function HealthTable({ entries, onDelete, showActions = true }) {
                 borderBottom: '1px solid #f0f0f0'
               }}>
                 {entry.sleep}
-              </td>
-              <td style={{
-                padding: '14px 16px',
-                fontSize: '16px',
-                color: '#3b82f6',
-                fontWeight: '700',
-                border: 'none',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                {entry.activity}
-              </td>
-              <td style={{
-                padding: '14px 16px',
-                fontSize: '14px',
-                color: '#666',
-                fontWeight: '500',
-                border: 'none',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                {entry.activity_type ? (
-                  <span style={{
-                    background: hoveredRow === index ? '#1ec287' : '#e8f4f0',
-                    color: hoveredRow === index ? 'white' : '#1ec287',
-                    padding: '4px 12px',
-                    borderRadius: '20px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    display: 'inline-block',
-                    transition: 'all 0.2s'
-                  }}>
-                    {entry.activity_type}
-                  </span>
-                ) : '-'}
               </td>
               {showActions && (
                 <td style={{
