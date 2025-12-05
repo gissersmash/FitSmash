@@ -25,7 +25,7 @@ export default function Dashboard() {
   const [username, setUsername] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showOpenFoodSearch, setShowOpenFoodSearch] = useState(false);
-  const [newFood, setNewFood] = useState({ name: '', calories: '', proteins: '', carbs: '', fats: '', image: '' });
+  const [newFood, setNewFood] = useState({ name: '', calories: '', proteins: '', carbs: '', fats: '', image: '', quantity: '100' });
   const [showCalorieAlert, setShowCalorieAlert] = useState(false);
   const [calorieOverage, setCalorieOverage] = useState(0);
   const [activities, setActivities] = useState([]);

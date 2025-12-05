@@ -43,14 +43,15 @@ export default function FoodManagement({
         proteins: Number(newFood.proteins) || 0,
         carbs: Number(newFood.carbs) || 0,
         fats: Number(newFood.fats) || 0,
-        image: newFood.image || null
+        image: newFood.image || null,
+        quantity: Number(newFood.quantity) || 100
       };
       const res = await axios.post('http://localhost:4000/api/foods', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const created = res.data && (res.data.food || res.data.data || res.data);
       setFoods(prev => [created, ...prev]);
-      setNewFood({ name: '', calories: '', proteins: '', carbs: '', fats: '', image: '' });
+      setNewFood({ name: '', calories: '', proteins: '', carbs: '', fats: '', image: '', quantity: '100' });
       setShowAddForm(false);
       
       const notification = document.createElement('div');
@@ -141,7 +142,16 @@ export default function FoodManagement({
                 required style={{ borderRadius: '10px', border: '2px solid #e0e0e0' }}
               />
             </div>
-            <div className="col-md-6">
+            <div className="col-md-3">
+              <label style={{ fontSize: '13px', fontWeight: '600', color: '#333', marginBottom: '6px', display: 'block' }}>
+                Quantité (g) *
+              </label>
+              <input type="number" className="form-control" placeholder="100"
+                value={newFood.quantity} onChange={(e) => setNewFood({...newFood, quantity: e.target.value})}
+                required style={{ borderRadius: '10px', border: '2px solid #e0e0e0' }}
+              />
+            </div>
+            <div className="col-md-3">
               <label style={{ fontSize: '13px', fontWeight: '600', color: '#333', marginBottom: '6px', display: 'block' }}>
                 Calories (kcal) *
               </label>
