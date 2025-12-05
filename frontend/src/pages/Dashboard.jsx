@@ -166,14 +166,14 @@ export default function Dashboard() {
     <div className={styles.container}>
       <Sidebar />
 
-      <div style={{ display: 'flex', flexGrow: 1, gap: '32px', alignItems: 'flex-start' }}>
-        <div className={styles.content} style={{ flex: '1 1 65%', maxWidth: 'none' }}>
+      <div className={styles.mainWrapper}>
+        <div className={`${styles.content} ${styles.contentMain}`}>
           <div className={styles.heroSection}>
             <div>
               <h2 className={styles.heroTitle}>Bienvenue, {username}</h2>
               <p className={styles.heroSubtitle}>
                 {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                <span style={{ margin: '0 12px', opacity: 0.5 }}>•</span>
+                <span className={styles.subtitleSeparator}>•</span>
                 Suivez vos calories et atteignez vos objectifs santé
               </p>
             </div>
@@ -182,66 +182,30 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* Info activités physiques */}
-          <div style={{
-            background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-            borderRadius: '16px',
-            padding: '20px 24px',
-            marginBottom: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
-            color: 'white'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.2)',
-                borderRadius: '12px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <i className="bi bi-activity" style={{ fontSize: '28px' }}></i>
+          <div className={styles.activityBanner}>
+            <div className={styles.activityBannerContent}>
+              <div className={styles.activityBannerIcon}>
+                <i className={`bi bi-activity ${styles.activityBannerIconBi}`}></i>
               </div>
               <div>
-                <h5 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+                <h5 className={styles.activityBannerTitle}>
                   Nouveau : Suivez vos activités physiques !
                 </h5>
-                <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
+                <p className={styles.activityBannerText}>
                   Enregistrez vos sports et calculez automatiquement les calories brûlées
                 </p>
               </div>
             </div>
-            <a
-              href="/tableau-suivi"
-              style={{
-                background: 'white',
-                color: '#2563eb',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-                fontWeight: 'bold',
-                fontSize: '14px',
-                transition: 'all 0.3s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-              onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-            >
+            <a href="/tableau-suivi" className={styles.activityBannerLink}>
               Découvrir
               <i className="bi bi-arrow-right"></i>
             </a>
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
+          <div className={styles.searchSection}>
             <button 
-              className={`btn ${styles.loadBtn}`}
+              className={`btn ${styles.loadBtn} ${styles.searchButton} ${showOpenFoodSearch ? styles.searchButtonMargin : ''}`}
               onClick={() => setShowOpenFoodSearch(!showOpenFoodSearch)}
-              style={{ width: '100%', padding: '16px', fontSize: '16px', marginBottom: showOpenFoodSearch ? '20px' : '0' }}
             >
               <i className={`bi ${showOpenFoodSearch ? 'bi-x-circle' : 'bi-search'} me-2`}></i>
               {showOpenFoodSearch ? 'Fermer la recherche' : 'Catalogue des aliments'}
@@ -252,7 +216,7 @@ export default function Dashboard() {
           <div className="row g-4 mb-4">
             <div className="col-md-4">
               <div className={styles.statsCard}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                <div className={styles.statsCardInner}>
                   <div className={`${styles.statsIconWrapper} ${styles.statsIconGreen}`}>
                     <i className={`bi bi-bullseye ${styles.statsIcon}`}></i>
                   </div>
@@ -267,7 +231,7 @@ export default function Dashboard() {
 
             <div className="col-md-4">
               <div className={styles.statsCard}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                <div className={styles.statsCardInner}>
                   <div className={`${styles.statsIconWrapper} ${styles.statsIconBlue}`}>
                     <i className={`bi bi-fire ${styles.statsIcon}`}></i>
                   </div>
@@ -282,7 +246,7 @@ export default function Dashboard() {
 
             <div className="col-md-4">
               <div className={styles.statsCard}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                <div className={styles.statsCardInner}>
                   <div className={`${styles.statsIconWrapper} ${styles.statsIconOrange}`}>
                     <i className={`bi bi-lightning-charge ${styles.statsIcon}`}></i>
                   </div>
@@ -299,7 +263,7 @@ export default function Dashboard() {
           <div className="row g-4 mb-4">
             <div className="col-md-12">
               <div className={styles.statsCard}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                <div className={styles.statsCardInner}>
                   <div className={`${styles.statsIconWrapper} ${caloriesRestantes < 0 ? styles.statsIconRed : styles.statsIconSuccess}`}>
                     <i className={`bi ${caloriesRestantes < 0 ? 'bi-exclamation-triangle' : 'bi-check-circle'} ${styles.statsIcon}`}></i>
                   </div>
@@ -322,7 +286,7 @@ export default function Dashboard() {
                 {caloriesRestantes > 0 ? `${Math.round(caloriesRestantes)} kcal restantes` : `Objectif atteint`}
               </span>
             </div>
-            <ProgressBar now={pct} style={{ height: 12, borderRadius: 6 }} variant={pct >= 100 ? 'danger' : 'success'} />
+            <ProgressBar now={pct} className={styles.progressBarCustom} variant={pct >= 100 ? 'danger' : 'success'} />
           </div>
 
           <div className="row g-4 mb-4">
@@ -405,107 +369,38 @@ export default function Dashboard() {
 
       {/* Modal d'alerte dépassement calories */}
       {showCalorieAlert && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            animation: 'fadeIn 0.3s'
-          }}
-          onClick={() => setShowCalorieAlert(false)}
-        >
-          <div
-            style={{
-              background: 'white',
-              borderRadius: '24px',
-              padding: '40px',
-              maxWidth: '480px',
-              width: '90%',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-              animation: 'slideDown 0.4s ease-out',
-              position: 'relative'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-              <div
-                style={{
-                  width: '90px',
-                  height: '90px',
-                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 20px',
-                  boxShadow: '0 8px 24px rgba(239, 68, 68, 0.4)',
-                  animation: 'pulse 2s infinite'
-                }}
-              >
-                <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '48px', color: 'white' }}></i>
+        <div className={styles.alertOverlay} onClick={() => setShowCalorieAlert(false)}>
+          <div className={styles.alertModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.alertIconContainer}>
+              <div className={styles.alertIconCircle}>
+                <i className={`bi bi-exclamation-triangle-fill ${styles.alertIconBi}`}></i>
               </div>
-              <h2 style={{ fontSize: '26px', fontWeight: 'bold', color: '#dc2626', marginBottom: '10px' }}>
+              <h2 className={styles.alertTitle}>
                 Objectif dépassé !
               </h2>
-              <p style={{ color: '#666', fontSize: '16px', lineHeight: '1.6', marginBottom: '20px' }}>
-                Vous avez dépassé votre objectif calorique quotidien de <strong style={{ color: '#dc2626' }}>{calorieOverage} kcal</strong>
+              <p className={styles.alertText}>
+                Vous avez dépassé votre objectif calorique quotidien de <strong className={styles.alertTextStrong}>{calorieOverage} kcal</strong>
               </p>
-              <div style={{
-                background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
-                border: '2px solid #fca5a5',
-                borderRadius: '16px',
-                padding: '20px',
-                marginBottom: '10px'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '15px', color: '#991b1b', fontWeight: '600' }}>
+              <div className={styles.alertBox}>
+                <div className={styles.alertBoxRow}>
+                  <span className={styles.alertBoxLabel}>
                     <i className="bi bi-bullseye me-2"></i>Objectif
                   </span>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#dc2626' }}>{objectif} kcal</span>
+                  <span className={styles.alertBoxValue}>{objectif} kcal</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '15px', color: '#991b1b', fontWeight: '600' }}>
+                <div className={styles.alertBoxRowLast}>
+                  <span className={styles.alertBoxLabel}>
                     <i className="bi bi-fire me-2"></i>Consommé
                   </span>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#dc2626' }}>{totalCalories + calorieOverage} kcal</span>
+                  <span className={styles.alertBoxValue}>{totalCalories + calorieOverage} kcal</span>
                 </div>
               </div>
-              <p style={{ fontSize: '14px', color: '#6b7280', fontStyle: 'italic', marginTop: '16px' }}>
+              <p className={styles.alertFooter}>
                 💡 Conseil : Pratiquez une activité physique pour compenser ou ajustez vos prochains repas
               </p>
             </div>
 
-            <button
-              onClick={() => setShowCalorieAlert(false)}
-              style={{
-                width: '100%',
-                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                color: 'white',
-                border: 'none',
-                fontWeight: 'bold',
-                padding: '16px',
-                borderRadius: '12px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                boxShadow: '0 4px 16px rgba(239, 68, 68, 0.4)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 16px rgba(239, 68, 68, 0.4)';
-              }}
-            >
+            <button onClick={() => setShowCalorieAlert(false)} className={styles.alertCloseButton}>
               <i className="bi bi-check-circle me-2"></i>
               J'ai compris
             </button>
@@ -513,34 +408,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes pulse {
-          0%, 100% {
-            transform: scale(1);
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
-          }
-          50% {
-            transform: scale(1.05);
-            box-shadow: 0 12px 32px rgba(239, 68, 68, 0.6);
-          }
-        }
-      `}</style>
     </div>
   );
 }

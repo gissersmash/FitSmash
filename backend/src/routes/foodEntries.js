@@ -42,7 +42,7 @@ router.post('/', auth, async (req, res) => {
         date: date || new Date().toISOString().split('T')[0]
       });
       
-      console.log('✅ Aliment ajouté:', newEntry.name, '-', newEntry.calories, 'kcal pour', newEntry.quantity, 'g');
+      console.log('Aliment ajouté:', newEntry.name, '-', newEntry.calories, 'kcal pour', newEntry.quantity, 'g');
       
       return res.status(201).json({ 
         success: true,
@@ -51,7 +51,7 @@ router.post('/', auth, async (req, res) => {
       });
     }
   } catch (err) {
-    console.error('❌ Erreur ajout food entry:', err);
+    console.error('Erreur ajout food entry:', err);
     return res.status(500).json({ 
       success: false,
       message: err.message 
@@ -59,8 +59,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 sequelize.sync({ alter: true })
-  .then(() => console.log("✅ Tables synchronisées"))
-  .catch(err => console.error("❌ Erreur sync:", err));
+  .then(() => console.log("Tables synchronisées"))
+  .catch(err => console.error("Erreur sync:", err));
 
 
 // Récupération des aliments pour l'utilisateur
@@ -97,14 +97,14 @@ router.delete('/:id', auth, async (req, res) => {
     
     await entry.destroy();
     
-    console.log(`✅ Aliment supprimé: ${entry.name} (ID: ${entryId})`);
+    console.log(`Aliment supprimé: ${entry.name} (ID: ${entryId})`);
     
     res.json({ 
       success: true,
       message: 'Aliment supprimé avec succès' 
     });
   } catch (err) {
-    console.error('❌ Erreur suppression food entry:', err);
+    console.error('Erreur suppression food entry:', err);
     res.status(500).json({ 
       success: false,
       message: err.message 

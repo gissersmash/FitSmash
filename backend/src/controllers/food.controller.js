@@ -2,7 +2,7 @@ import axios from "axios";
 import { Op } from "sequelize";
 import { Food } from "../models/Food.js";
 
-// ✅ Recherche d'aliment par code-barres via Open Food Facts
+//  Recherche d'aliment par code-barres via Open Food Facts
 export async function getFoodByBarcode(req, res) {
   const { code } = req.params;
   try {
@@ -13,7 +13,7 @@ export async function getFoodByBarcode(req, res) {
   }
 }
 
-// ✅ Rechercher des aliments par nom
+//  Rechercher des aliments par nom
 export async function searchFoods(req, res) {
   try {
     const { search } = req.query;
@@ -28,7 +28,7 @@ export async function searchFoods(req, res) {
   }
 }
 
-// ✅ Ajouter un aliment
+// Ajouter un aliment
 export async function addFood(req, res) {
   try {
     const { name, calories, quantity } = req.body;
@@ -44,7 +44,7 @@ export async function addFood(req, res) {
   }
 }
 
-// ✅ Lister les aliments d’un utilisateur
+//  Lister les aliments d’un utilisateur
 export async function listFoods(req, res) {
   try {
     const foods = await Food.findAll({
@@ -57,7 +57,7 @@ export async function listFoods(req, res) {
   }
 }
 
-// ✅ Supprimer un aliment
+// Supprimer un aliment
 export async function deleteFood(req, res) {
   try {
     const { id } = req.params;
@@ -70,7 +70,7 @@ export async function deleteFood(req, res) {
   }
 }
 
-// ✅ Modifier un aliment (déclaré UNE seule fois)
+// Modifier un aliment (déclaré UNE seule fois)
 export async function updateFood(req, res) {
   try {
     const { id } = req.params;
@@ -84,7 +84,7 @@ export async function updateFood(req, res) {
   }
 }
 
-// ✅ Nouvelle route publique : lister tous les aliments
+// Nouvelle route publique : lister tous les aliments
 export async function listAllFoods(req, res) {
   try {
     const foods = await Food.findAll({

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 const ActivitySearch = ({ onActivitySelect, weight = 70, duration = 60 }) => {
@@ -192,5 +192,4 @@ const ActivitySearch = ({ onActivitySelect, weight = 70, duration = 60 }) => {
     </div>
   );
 };
-
 export default ActivitySearch;

@@ -615,3 +615,255 @@
     width: 100%;
   }
 }
+
+/* Nouvelles classes pour harmonisation */
+.mainWrapper {
+  display: flex;
+  flex-grow: 1;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.contentMain {
+  flex: 1 1 65%;
+  max-width: none;
+}
+
+.subtitleSeparator {
+  margin: 0 12px;
+  opacity: 0.5;
+}
+
+.activityBanner {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  color: white;
+}
+
+.activityBannerContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.activityBannerIcon {
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activityBannerIconBi {
+  font-size: 28px;
+}
+
+.activityBannerTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.activityBannerText {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.activityBannerLink {
+  background: white;
+  color: #2563eb;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activityBannerLink:hover {
+  transform: scale(1.05);
+  color: #2563eb;
+}
+
+.searchSection {
+  margin-bottom: 24px;
+}
+
+.searchButton {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+}
+
+.searchButtonMargin {
+  margin-bottom: 20px;
+}
+
+.statsCardInner {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.alertOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.alertModal {
+  background: white;
+  border-radius: 24px;
+  padding: 48px 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alertIconContainer {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.alertIconCircle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.alertIconBi {
+  font-size: 48px;
+  color: white;
+}
+
+.alertTitle {
+  font-size: 26px;
+  font-weight: bold;
+  color: #dc2626;
+  margin-bottom: 10px;
+}
+
+.alertText {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.alertTextStrong {
+  color: #dc2626;
+}
+
+.alertBox {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.alertBoxRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.alertBoxRowLast {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alertBoxLabel {
+  font-size: 15px;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.alertBoxValue {
+  font-size: 20px;
+  font-weight: bold;
+  color: #dc2626;
+}
+
+.alertFooter {
+  font-size: 14px;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 16px;
+}
+
+.alertCloseButton {
+  background: linear-gradient(135deg, #1ec287 0%, #16a970 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s;
+  margin-top: 24px;
+  box-shadow: 0 4px 12px rgba(30, 194, 135, 0.3);
+}
+
+.alertCloseButton:hover {
+  background: linear-gradient(135deg, #16a970 0%, #138f5f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(30, 194, 135, 0.4);
+}
+
+.progressBarCustom {
+  height: 12px;
+  border-radius: 6px;
+}

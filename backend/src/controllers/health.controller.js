@@ -2,7 +2,7 @@
 import HealthEntry from "../models/HealthEntry.js";
 import { Op } from "sequelize";
 
-// ➕ Ajouter une entrée santé
+//  Ajouter une entrée santé
 export async function addHealthEntry(req, res) {
   try {
     const { weight, sleep, activity, date, activity_type } = req.body;
