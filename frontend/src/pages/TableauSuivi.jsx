@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import HealthTable from "../components/HealthTable";
 import ActivitySearch from "../components/ActivitySearch";
 import { getHealthEntries, addHealthEntry, deleteHealthEntry, getStats } from "../services/healthService";
+import { getFoodEntries, deleteFoodEntry } from "../services/foodEntryService";
 import { setToken } from "../services/api";
 import axios from "axios";
 import { showNotification } from "../utils/notifications";
@@ -12,7 +13,7 @@ export default function TableauSuivi() {
   const [newEntry, setNewEntry] = useState({ weight: "", sleep_hours: "" });
   const [period, setPeriod] = useState("week");
   const [stats, setStats] = useState([]);
-  const [activeTab, setActiveTab] = useState("health"); // "health" ou "activities"
+  const [activeTab, setActiveTab] = useState("health"); // "health", "activities" ou "nutrition"
   const [activities, setActivities] = useState([]);
   const [activityTypes, setActivityTypes] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState("");
@@ -21,6 +22,8 @@ export default function TableauSuivi() {
   const [activityDate, setActivityDate] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("Tous");
+  const [foodHistory, setFoodHistory] = useState([]);
+  const [nutritionPeriod, setNutritionPeriod] = useState("week");
 
   const token = localStorage.getItem("token");
 
@@ -68,6 +71,51 @@ export default function TableauSuivi() {
     }
   };
 
+  // Récupération de l'historique nutrition
+  const fetchFoodHistory = async () => {
+    try {
+      const res = await getFoodEntries();
+      let entries = [];
+      if (Array.isArray(res.data)) entries = res.data;
+      else if (Array.isArray(res.data.entries)) entries = res.data.entries;
+      else if (Array.isArray(res.data.data)) entries = res.data.data;
+      
+      // Filtrer selon la période
+      const now = new Date();
+      let startDate;
+      
+      if (nutritionPeriod === "week") {
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 7);
+      } else if (nutritionPeriod === "month") {
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 1);
+      } else if (nutritionPeriod === "year") {
+        startDate = new Date(now);
+        startDate.setFullYear(now.getFullYear() - 1);
+      }
+      
+      const filteredEntries = entries.filter(entry => {
+        const entryDate = new Date(entry.date);
+        return entryDate >= startDate;
+      });
+      
+      setFoodHistory(filteredEntries);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteFoodEntry = async (id) => {
+    try {
+      await deleteFoodEntry(id);
+      showNotification("success", "Entrée supprimée");
+      fetchFoodHistory();
+    } catch (err) {
+      showNotification("error", "Erreur lors de la suppression");
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return window.location.href = "/login";
@@ -77,11 +125,16 @@ export default function TableauSuivi() {
     fetchStats(period);
     fetchActivities();
     fetchActivityTypes();
+    fetchFoodHistory();
   }, []);
 
   useEffect(() => {
     fetchStats(period);
   }, [period]);
+
+  useEffect(() => {
+    fetchFoodHistory();
+  }, [nutritionPeriod]);
 
   const handleInputChange = (e) => setNewEntry({ ...newEntry, [e.target.name]: e.target.value });
 
@@ -177,11 +230,11 @@ export default function TableauSuivi() {
           </h3>
 
           {/* Onglets */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
               onClick={() => setActiveTab("health")}
               style={{
-                padding: '12px 32px',
+                padding: '12px 24px',
                 borderRadius: '12px',
                 border: 'none',
                 background: activeTab === "health" ? 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)' : 'white',
@@ -198,7 +251,7 @@ export default function TableauSuivi() {
             <button
               onClick={() => setActiveTab("activities")}
               style={{
-                padding: '12px 32px',
+                padding: '12px 24px',
                 borderRadius: '12px',
                 border: 'none',
                 background: activeTab === "activities" ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'white',
@@ -211,6 +264,23 @@ export default function TableauSuivi() {
             >
               <i className="bi bi-activity me-2"></i>
               Activités Physiques
+            </button>
+            <button
+              onClick={() => setActiveTab("nutrition")}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: 'none',
+                background: activeTab === "nutrition" ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'white',
+                color: activeTab === "nutrition" ? 'white' : '#666',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: activeTab === "nutrition" ? '0 4px 12px rgba(245, 158, 11, 0.3)' : 'none'
+              }}
+            >
+              <i className="bi bi-clipboard-data me-2"></i>
+              Historique Nutrition
             </button>
           </div>
 
@@ -687,6 +757,168 @@ export default function TableauSuivi() {
                               <button
                                 className="btn btn-sm btn-danger"
                                 onClick={() => handleDeleteActivity(activity.id)}
+                                style={{ borderRadius: '8px' }}
+                              >
+                                <i className="bi bi-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Onglet Historique Nutrition */}
+          {activeTab === "nutrition" && (
+            <>
+              {/* Filtres période */}
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '24px',
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h5 style={{ color: '#f59e0b', fontWeight: '600', margin: 0 }}>
+                    <i className="bi bi-calendar3 me-2"></i>
+                    Période
+                  </h5>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    {['week', 'month', 'year'].map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => setNutritionPeriod(p)}
+                        style={{
+                          padding: '8px 20px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          background: nutritionPeriod === p ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : '#f3f4f6',
+                          color: nutritionPeriod === p ? 'white' : '#666',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s',
+                          fontSize: '14px'
+                        }}
+                      >
+                        {p === 'week' ? 'Semaine' : p === 'month' ? 'Mois' : 'Année'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistiques nutrition */}
+              <div className="row mb-4">
+                <div className="col-md-4">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
+                  }}>
+                    <i className="bi bi-journal-text" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{foodHistory.length}</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Entrées enregistrées</div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+                  }}>
+                    <i className="bi bi-fire" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                      {Math.round(foodHistory.reduce((sum, e) => sum + (Number(e.calories) || 0), 0))}
+                    </div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Calories totales</div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                  }}>
+                    <i className="bi bi-graph-up" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                      {foodHistory.length > 0 ? Math.round(foodHistory.reduce((sum, e) => sum + (Number(e.calories) || 0), 0) / foodHistory.length) : 0}
+                    </div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Moyenne / repas</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tableau historique */}
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+              }}>
+                <h5 style={{ color: '#f59e0b', marginBottom: '20px', fontWeight: '600' }}>
+                  <i className="bi bi-list-ul me-2"></i>
+                  Historique des repas
+                </h5>
+
+                {foodHistory.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                    <i className="bi bi-inbox" style={{ fontSize: '48px', marginBottom: '16px', display: 'block' }}></i>
+                    <p>Aucune entrée pour cette période</p>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-hover">
+                      <thead style={{ background: '#f8f9fa' }}>
+                        <tr>
+                          <th>Date</th>
+                          <th>Aliment</th>
+                          <th>Calories</th>
+                          <th>Protéines</th>
+                          <th>Glucides</th>
+                          <th>Lipides</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {foodHistory.map((entry) => (
+                          <tr key={entry.id}>
+                            <td>{new Date(entry.date).toLocaleDateString('fr-FR')}</td>
+                            <td>
+                              <strong>{entry.name || entry.foodName}</strong>
+                            </td>
+                            <td>
+                              <span style={{ 
+                                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                                color: 'white',
+                                padding: '4px 12px',
+                                borderRadius: '8px',
+                                fontWeight: 'bold',
+                                fontSize: '13px'
+                              }}>
+                                {Math.round(entry.calories || 0)} kcal
+                              </span>
+                            </td>
+                            <td>{Math.round(entry.proteins || 0)}g</td>
+                            <td>{Math.round(entry.carbs || 0)}g</td>
+                            <td>{Math.round(entry.fats || 0)}g</td>
+                            <td>
+                              <button
+                                className="btn btn-sm btn-danger"
+                                onClick={() => handleDeleteFoodEntry(entry.id)}
                                 style={{ borderRadius: '8px' }}
                               >
                                 <i className="bi bi-trash"></i>

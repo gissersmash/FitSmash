@@ -51,7 +51,15 @@ export default function Dashboard() {
       if (Array.isArray(res.data)) entries = res.data;
       else if (Array.isArray(res.data.entries)) entries = res.data.entries;
       else if (Array.isArray(res.data.data)) entries = res.data.data;
-      setFoodEntries(entries);
+      
+      // Filtrer uniquement les entrées du jour actuel
+      const today = new Date().toISOString().split('T')[0];
+      const todayEntries = entries.filter(entry => {
+        const entryDate = entry.date ? entry.date.split('T')[0] : null;
+        return entryDate === today;
+      });
+      
+      setFoodEntries(todayEntries);
     } catch (err) {
       // Erreur silencieuse
     }
@@ -160,7 +168,11 @@ export default function Dashboard() {
           <div className={styles.heroSection}>
             <div>
               <h2 className={styles.heroTitle}>Bienvenue, {username}</h2>
-              <p className={styles.heroSubtitle}>Suivez vos calories et atteignez vos objectifs santé</p>
+              <p className={styles.heroSubtitle}>
+                📅 {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                <span style={{ margin: '0 12px', opacity: 0.5 }}>•</span>
+                Suivez vos calories et atteignez vos objectifs santé
+              </p>
             </div>
             <button className={`btn btn-light ${styles.logoutBtn}`} onClick={handleLogout}>
               <i className="bi bi-box-arrow-right me-2"></i>Déconnexion
