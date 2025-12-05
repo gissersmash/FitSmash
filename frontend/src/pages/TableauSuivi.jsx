@@ -24,6 +24,7 @@ export default function TableauSuivi() {
   const [categoryFilter, setCategoryFilter] = useState("Tous");
   const [foodHistory, setFoodHistory] = useState([]);
   const [nutritionPeriod, setNutritionPeriod] = useState("week");
+  const [expandedDates, setExpandedDates] = useState(new Set());
 
   const token = localStorage.getItem("token");
 
@@ -115,6 +116,29 @@ export default function TableauSuivi() {
       showNotification("error", "Erreur lors de la suppression");
     }
   };
+
+  const toggleDateExpansion = (date) => {
+    const newExpanded = new Set(expandedDates);
+    if (newExpanded.has(date)) {
+      newExpanded.delete(date);
+    } else {
+      newExpanded.add(date);
+    }
+    setExpandedDates(newExpanded);
+  };
+
+  // Grouper les aliments par date
+  const groupedFoodHistory = foodHistory.reduce((acc, entry) => {
+    const date = new Date(entry.date).toISOString().split('T')[0];
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(entry);
+    return acc;
+  }, {});
+
+  // Trier les dates par ordre décroissant
+  const sortedDates = Object.keys(groupedFoodHistory).sort((a, b) => new Date(b) - new Date(a));
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -870,8 +894,8 @@ export default function TableauSuivi() {
                 boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
               }}>
                 <h5 style={{ color: '#f59e0b', marginBottom: '20px', fontWeight: '600' }}>
-                  <i className="bi bi-list-ul me-2"></i>
-                  Historique des repas
+                  <i className="bi bi-calendar-week me-2"></i>
+                  Historique par jour
                 </h5>
 
                 {foodHistory.length === 0 ? (
@@ -880,54 +904,148 @@ export default function TableauSuivi() {
                     <p>Aucune entrée pour cette période</p>
                   </div>
                 ) : (
-                  <div className="table-responsive">
-                    <table className="table table-hover">
-                      <thead style={{ background: '#f8f9fa' }}>
-                        <tr>
-                          <th>Date</th>
-                          <th>Aliment</th>
-                          <th>Calories</th>
-                          <th>Protéines</th>
-                          <th>Glucides</th>
-                          <th>Lipides</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {foodHistory.map((entry) => (
-                          <tr key={entry.id}>
-                            <td>{new Date(entry.date).toLocaleDateString('fr-FR')}</td>
-                            <td>
-                              <strong>{entry.name || entry.foodName}</strong>
-                            </td>
-                            <td>
-                              <span style={{ 
-                                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                                color: 'white',
-                                padding: '4px 12px',
-                                borderRadius: '8px',
-                                fontWeight: 'bold',
-                                fontSize: '13px'
-                              }}>
-                                {Math.round(entry.calories || 0)} kcal
-                              </span>
-                            </td>
-                            <td>{Math.round(entry.proteins || 0)}g</td>
-                            <td>{Math.round(entry.carbs || 0)}g</td>
-                            <td>{Math.round(entry.fats || 0)}g</td>
-                            <td>
-                              <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() => handleDeleteFoodEntry(entry.id)}
-                                style={{ borderRadius: '8px' }}
-                              >
-                                <i className="bi bi-trash"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {sortedDates.map((date) => {
+                      const entries = groupedFoodHistory[date];
+                      const totalCalories = entries.reduce((sum, e) => sum + (Number(e.calories) || 0), 0);
+                      const isExpanded = expandedDates.has(date);
+                      
+                      return (
+                        <div
+                          key={date}
+                          style={{
+                            border: '2px solid #e5e7eb',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            transition: 'all 0.3s'
+                          }}
+                        >
+                          {/* En-tête de la date */}
+                          <button
+                            onClick={() => toggleDateExpansion(date)}
+                            style={{
+                              width: '100%',
+                              background: isExpanded ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : '#f9fafb',
+                              border: 'none',
+                              padding: '16px 20px',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <i 
+                                className={`bi bi-chevron-${isExpanded ? 'down' : 'right'}`}
+                                style={{ 
+                                  fontSize: '20px', 
+                                  color: isExpanded ? 'white' : '#f59e0b',
+                                  transition: 'transform 0.3s'
+                                }}
+                              ></i>
+                              <div style={{ textAlign: 'left' }}>
+                                <div style={{ 
+                                  fontWeight: 'bold', 
+                                  fontSize: '16px',
+                                  color: isExpanded ? 'white' : '#111827'
+                                }}>
+                                  {new Date(date).toLocaleDateString('fr-FR', { 
+                                    weekday: 'long', 
+                                    day: 'numeric', 
+                                    month: 'long', 
+                                    year: 'numeric' 
+                                  })}
+                                </div>
+                                <div style={{ 
+                                  fontSize: '13px', 
+                                  color: isExpanded ? 'rgba(255,255,255,0.9)' : '#6b7280',
+                                  marginTop: '2px'
+                                }}>
+                                  {entries.length} aliment{entries.length > 1 ? 's' : ''} • {Math.round(totalCalories)} kcal
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{
+                              background: isExpanded ? 'rgba(255,255,255,0.2)' : '#fef3c7',
+                              color: isExpanded ? 'white' : '#d97706',
+                              padding: '8px 16px',
+                              borderRadius: '8px',
+                              fontWeight: 'bold',
+                              fontSize: '15px'
+                            }}>
+                              <i className="bi bi-fire me-1"></i>
+                              {Math.round(totalCalories)} kcal
+                            </div>
+                          </button>
+
+                          {/* Contenu détaillé */}
+                          {isExpanded && (
+                            <div style={{ background: 'white' }}>
+                              <div className="table-responsive">
+                                <table className="table table-hover mb-0">
+                                  <thead style={{ background: '#f8f9fa' }}>
+                                    <tr>
+                                      <th style={{ padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: '#666' }}>Aliment</th>
+                                      <th style={{ padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: '#666' }}>Calories</th>
+                                      <th style={{ padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: '#666' }}>Protéines</th>
+                                      <th style={{ padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: '#666' }}>Glucides</th>
+                                      <th style={{ padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: '#666' }}>Lipides</th>
+                                      <th style={{ padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: '#666' }}></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {entries.map((entry) => (
+                                      <tr key={entry.id}>
+                                        <td style={{ padding: '12px 16px' }}>
+                                          <strong style={{ color: '#111827', fontSize: '14px' }}>
+                                            {entry.name || entry.foodName}
+                                          </strong>
+                                        </td>
+                                        <td style={{ padding: '12px 16px' }}>
+                                          <span style={{ 
+                                            background: '#fef3c7',
+                                            color: '#d97706',
+                                            padding: '4px 10px',
+                                            borderRadius: '6px',
+                                            fontWeight: 'bold',
+                                            fontSize: '13px'
+                                          }}>
+                                            {Math.round(entry.calories || 0)} kcal
+                                          </span>
+                                        </td>
+                                        <td style={{ padding: '12px 16px', fontSize: '14px', color: '#666' }}>
+                                          {Math.round(entry.proteins || 0)}g
+                                        </td>
+                                        <td style={{ padding: '12px 16px', fontSize: '14px', color: '#666' }}>
+                                          {Math.round(entry.carbs || 0)}g
+                                        </td>
+                                        <td style={{ padding: '12px 16px', fontSize: '14px', color: '#666' }}>
+                                          {Math.round(entry.fats || 0)}g
+                                        </td>
+                                        <td style={{ padding: '12px 16px' }}>
+                                          <button
+                                            className="btn btn-sm btn-danger"
+                                            onClick={() => handleDeleteFoodEntry(entry.id)}
+                                            style={{ 
+                                              borderRadius: '6px',
+                                              padding: '4px 10px',
+                                              fontSize: '13px'
+                                            }}
+                                          >
+                                            <i className="bi bi-trash"></i>
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
