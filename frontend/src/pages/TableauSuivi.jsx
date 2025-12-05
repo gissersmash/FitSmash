@@ -13,7 +13,7 @@ export default function TableauSuivi() {
   const [newEntry, setNewEntry] = useState({ weight: "", sleep_hours: "" });
   const [period, setPeriod] = useState("week");
   const [stats, setStats] = useState([]);
-  const [activeTab, setActiveTab] = useState("health"); // "health", "activities" ou "nutrition"
+  const [activeTab, setActiveTab] = useState("summary"); // "summary", "health", "activities" ou "nutrition"
   const [activities, setActivities] = useState([]);
   const [activityTypes, setActivityTypes] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState("");
@@ -256,6 +256,23 @@ export default function TableauSuivi() {
           {/* Onglets */}
           <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
+              onClick={() => setActiveTab("summary")}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: 'none',
+                background: activeTab === "summary" ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' : 'white',
+                color: activeTab === "summary" ? 'white' : '#666',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: activeTab === "summary" ? '0 4px 12px rgba(139, 92, 246, 0.3)' : 'none'
+              }}
+            >
+              <i className="bi bi-bar-chart-fill me-2"></i>
+              Résumé
+            </button>
+            <button
               onClick={() => setActiveTab("health")}
               style={{
                 padding: '12px 24px',
@@ -307,6 +324,164 @@ export default function TableauSuivi() {
               Historique Nutrition
             </button>
           </div>
+
+          {/* Onglet Résumé */}
+          {activeTab === "summary" && (
+            <>
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '24px',
+                marginBottom: '24px',
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
+              }}>
+                <h5 style={{ color: '#8b5cf6', marginBottom: '24px', fontWeight: '600', textAlign: 'center' }}>
+                  <i className="bi bi-bar-chart-fill me-2"></i>
+                  Vue d'ensemble de vos activités
+                </h5>
+
+                {/* Statistiques principales */}
+                <div className="row mb-4">
+                  <div className="col-md-3">
+                    <div style={{
+                      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+                      minHeight: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center'
+                    }}>
+                      <i className="bi bi-fire" style={{ fontSize: '40px', marginBottom: '12px' }}></i>
+                      <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+                        {Math.round(activities.reduce((sum, a) => sum + (a.calories_burned || 0), 0))}
+                      </div>
+                      <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '8px' }}>Calories totales</div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div style={{
+                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+                      minHeight: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center'
+                    }}>
+                      <i className="bi bi-calendar-day" style={{ fontSize: '40px', marginBottom: '12px' }}></i>
+                      <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+                        {(() => {
+                          const today = new Date().toISOString().split('T')[0];
+                          const todayActivities = activities.filter(a => a.date === today);
+                          return Math.round(todayActivities.reduce((sum, a) => sum + (a.calories_burned || 0), 0));
+                        })()}
+                      </div>
+                      <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '8px' }}>Calories aujourd'hui</div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div style={{
+                      background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+                      minHeight: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center'
+                    }}>
+                      <i className="bi bi-calendar-week" style={{ fontSize: '40px', marginBottom: '12px' }}></i>
+                      <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+                        {(() => {
+                          const weekAgo = new Date();
+                          weekAgo.setDate(weekAgo.getDate() - 7);
+                          const weekActivities = activities.filter(a => new Date(a.date) >= weekAgo);
+                          return Math.round(weekActivities.reduce((sum, a) => sum + (a.calories_burned || 0), 0));
+                        })()}
+                      </div>
+                      <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '8px' }}>Calories (7 jours)</div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div style={{
+                      background: 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 12px rgba(30, 194, 135, 0.3)',
+                      minHeight: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center'
+                    }}>
+                      <i className="bi bi-check-circle" style={{ fontSize: '40px', marginBottom: '12px' }}></i>
+                      <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{activities.length}</div>
+                      <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '8px' }}>Activités réalisées</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Statistiques supplémentaires */}
+                <div className="row">
+                  <div className="col-md-4">
+                    <div style={{
+                      background: '#f3f4f6',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center'
+                    }}>
+                      <i className="bi bi-clock" style={{ fontSize: '28px', color: '#3b82f6', marginBottom: '8px' }}></i>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>
+                        {activities.reduce((sum, a) => sum + (a.duration || 0), 0)}
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>Minutes totales</div>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div style={{
+                      background: '#f3f4f6',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center'
+                    }}>
+                      <i className="bi bi-calendar-range" style={{ fontSize: '28px', color: '#3b82f6', marginBottom: '8px' }}></i>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>
+                        {(() => {
+                          const today = new Date().toISOString().split('T')[0];
+                          return activities.filter(a => a.date === today).length;
+                        })()}
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>Activités aujourd'hui</div>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div style={{
+                      background: '#f3f4f6',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center'
+                    }}>
+                      <i className="bi bi-graph-up" style={{ fontSize: '28px', color: '#3b82f6', marginBottom: '8px' }}></i>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>
+                        {activities.length > 0 ? Math.round(activities.reduce((sum, a) => sum + (a.calories_burned || 0), 0) / activities.length) : 0}
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>Moyenne cal/activité</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {activeTab === "health" && (
             <>
@@ -541,7 +716,7 @@ export default function TableauSuivi() {
             <>
               {/* Statistiques activités */}
               <div className="row mb-4">
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <div style={{
                     background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                     borderRadius: '16px',
@@ -552,26 +727,51 @@ export default function TableauSuivi() {
                   }}>
                     <i className="bi bi-fire" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
                     <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{Math.round(totalCaloriesBurned)}</div>
-                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Calories brûlées</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Calories totales</div>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <div style={{
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                     borderRadius: '16px',
                     padding: '20px',
                     color: 'white',
                     textAlign: 'center',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
                   }}>
-                    <i className="bi bi-clock" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <i className="bi bi-calendar-day" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
                     <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
-                      {activities.reduce((sum, a) => sum + (a.duration || 0), 0)}
+                      {(() => {
+                        const today = new Date().toISOString().split('T')[0];
+                        const todayActivities = activities.filter(a => a.date === today);
+                        return Math.round(todayActivities.reduce((sum, a) => sum + (a.calories_burned || 0), 0));
+                      })()}
                     </div>
-                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Minutes d'activité</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Calories aujourd'hui</div>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
+                  }}>
+                    <i className="bi bi-calendar-week" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                      {(() => {
+                        const weekAgo = new Date();
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        const weekActivities = activities.filter(a => new Date(a.date) >= weekAgo);
+                        return Math.round(weekActivities.reduce((sum, a) => sum + (a.calories_burned || 0), 0));
+                      })()}
+                    </div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Calories (7 jours)</div>
+                  </div>
+                </div>
+                <div className="col-md-3">
                   <div style={{
                     background: 'linear-gradient(135deg, #1ec287 0%, #16a970 100%)',
                     borderRadius: '16px',
@@ -730,7 +930,7 @@ export default function TableauSuivi() {
               }}>
                 <h5 style={{ color: '#ef4444', marginBottom: '20px', fontWeight: '600' }}>
                   <i className="bi bi-list-ul me-2"></i>
-                  Historique des activités
+                  Historique par jour
                 </h5>
 
                 {activities.length === 0 ? (
@@ -739,58 +939,134 @@ export default function TableauSuivi() {
                     <p>Aucune activité enregistrée</p>
                   </div>
                 ) : (
-                  <div className="table-responsive">
-                    <table className="table table-hover">
-                      <thead style={{ background: '#f8f9fa' }}>
-                        <tr>
-                          <th>Date</th>
-                          <th>Activité</th>
-                          <th>Durée</th>
-                          <th>Calories</th>
-                          <th>Notes</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {activities.map((activity) => (
-                          <tr key={activity.id}>
-                            <td>{new Date(activity.date).toLocaleDateString('fr-FR')}</td>
-                            <td>
-                              <strong>{activity.name}</strong>
-                              <br />
-                              <small style={{ color: '#666' }}>{activity.met_value} MET</small>
-                            </td>
-                            <td>{activity.duration} min</td>
-                            <td>
-                              <span style={{ 
-                                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                                color: 'white',
-                                padding: '4px 12px',
-                                borderRadius: '8px',
-                                fontWeight: 'bold',
-                                fontSize: '13px'
-                              }}>
+                  (() => {
+                    // Grouper par date
+                    const grouped = activities.reduce((acc, activity) => {
+                      const date = activity.date;
+                      if (!acc[date]) acc[date] = [];
+                      acc[date].push(activity);
+                      return acc;
+                    }, {});
+
+                    // Trier les dates (plus récentes d'abord)
+                    const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+
+                    return sortedDates.map(date => {
+                      const dayActivities = grouped[date];
+                      const totalCalories = dayActivities.reduce((sum, a) => sum + (a.calories_burned || 0), 0);
+                      const totalDuration = dayActivities.reduce((sum, a) => sum + (a.duration || 0), 0);
+                      const isExpanded = expandedDates.has(date);
+
+                      return (
+                        <div key={date} style={{ marginBottom: '16px' }}>
+                          {/* En-tête du jour - Cliquable */}
+                          <div 
+                            onClick={() => {
+                              const newExpanded = new Set(expandedDates);
+                              if (isExpanded) {
+                                newExpanded.delete(date);
+                              } else {
+                                newExpanded.add(date);
+                              }
+                              setExpandedDates(newExpanded);
+                            }}
+                            style={{
+                              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                              padding: '12px 16px',
+                              borderRadius: '12px',
+                              color: 'white',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: isExpanded ? '8px' : '0',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <i className={`bi bi-chevron-${isExpanded ? 'down' : 'right'}`} style={{ fontSize: '18px' }}></i>
+                              <i className="bi bi-calendar3 me-2"></i>
+                              <strong>{new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+                            </div>
+                            <div style={{ display: 'flex', gap: '20px', fontSize: '14px' }}>
+                              <span>
                                 <i className="bi bi-fire me-1"></i>
-                                {Math.round(activity.calories_burned)}
+                                <strong>{Math.round(totalCalories)}</strong> kcal
                               </span>
-                            </td>
-                            <td style={{ maxWidth: '200px', fontSize: '13px', color: '#666' }}>
-                              {activity.notes || '-'}
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() => handleDeleteActivity(activity.id)}
-                                style={{ borderRadius: '8px' }}
-                              >
-                                <i className="bi bi-trash"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                              <span>
+                                <i className="bi bi-clock me-1"></i>
+                                <strong>{totalDuration}</strong> min
+                              </span>
+                              <span>
+                                <i className="bi bi-list-check me-1"></i>
+                                <strong>{dayActivities.length}</strong> {dayActivities.length > 1 ? 'activités' : 'activité'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Liste des activités du jour - Affichée seulement si expanded */}
+                          {isExpanded && (
+                            <div style={{ paddingLeft: '16px' }}>
+                              {dayActivities.map((activity) => (
+                                <div key={activity.id} style={{
+                                  background: '#f9fafb',
+                                  padding: '12px 16px',
+                                  borderRadius: '8px',
+                                  marginBottom: '8px',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center'
+                                }}>
+                                  <div style={{ flex: 1 }}>
+                                    <strong style={{ color: '#1f2937' }}>{activity.name}</strong>
+                                    {activity.notes && (
+                                      <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        <i className="bi bi-chat-left-text me-1"></i>
+                                        {activity.notes}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                    <span style={{ 
+                                      background: '#e5e7eb',
+                                      padding: '4px 10px',
+                                      borderRadius: '6px',
+                                      fontSize: '13px',
+                                      color: '#4b5563'
+                                    }}>
+                                      <i className="bi bi-clock me-1"></i>
+                                      {activity.duration} min
+                                    </span>
+                                    <span style={{ 
+                                      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                      color: 'white',
+                                      padding: '4px 10px',
+                                      borderRadius: '6px',
+                                      fontWeight: 'bold',
+                                      fontSize: '13px'
+                                    }}>
+                                      <i className="bi bi-fire me-1"></i>
+                                      {Math.round(activity.calories_burned)} kcal
+                                    </span>
+                                    <button
+                                      className="btn btn-sm btn-outline-danger"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteActivity(activity.id);
+                                      }}
+                                      style={{ borderRadius: '6px' }}
+                                    >
+                                      <i className="bi bi-trash"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    });
+                  })()
                 )}
               </div>
             </>
@@ -879,9 +1155,14 @@ export default function TableauSuivi() {
                   }}>
                     <i className="bi bi-graph-up" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
                     <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
-                      {foodHistory.length > 0 ? Math.round(foodHistory.reduce((sum, e) => sum + (Number(e.calories) || 0), 0) / foodHistory.length) : 0}
+                      {(() => {
+                        if (foodHistory.length === 0) return 0;
+                        const totalCalories = foodHistory.reduce((sum, e) => sum + (Number(e.calories) || 0), 0);
+                        const uniqueDays = new Set(foodHistory.map(e => new Date(e.date).toDateString())).size;
+                        return Math.round(totalCalories / uniqueDays);
+                      })()}
                     </div>
-                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Moyenne / repas</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9 }}>Moyenne calories / jour</div>
                   </div>
                 </div>
               </div>
