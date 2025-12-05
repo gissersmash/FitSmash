@@ -61,15 +61,38 @@ export async function updateProfile(req, res) {
     const userId = req.userId; // Fourni par le middleware auth
     const { username, avatar } = req.body;
 
+    console.log('updateProfile - userId:', userId);
+    console.log('updateProfile - username:', username);
+    console.log('updateProfile - avatar length:', avatar ? avatar.length : 0);
+
+    // Validation
+    if (username && (username.trim().length < 3 || username.trim().length > 100)) {
+      return res.status(400).json({ message: "Le nom d'utilisateur doit contenir entre 3 et 100 caractères" });
+    }
+
     // Trouver l'utilisateur
     const user = await User.findByPk(userId);
-    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    if (!user) {
+      console.log('updateProfile - User not found:', userId);
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    // Vérifier si le username est déjà pris par un autre utilisateur
+    if (username && username !== user.username) {
+      const existingUser = await User.findOne({ where: { username: username.trim() } });
+      if (existingUser && existingUser.id !== userId) {
+        console.log('updateProfile - Username already taken:', username);
+        return res.status(400).json({ message: "Ce nom d'utilisateur est déjà utilisé" });
+      }
+    }
 
     // Mettre à jour les champs fournis
-    if (username !== undefined) user.username = username;
+    if (username !== undefined) user.username = username.trim();
     if (avatar !== undefined) user.avatar = avatar;
 
     await user.save();
+
+    console.log('updateProfile - Success');
 
     // Retourner l'utilisateur mis à jour (sans le mot de passe)
     return res.json({ 
@@ -81,6 +104,8 @@ export async function updateProfile(req, res) {
       } 
     });
   } catch (e) {
+    console.error('Erreur updateProfile:', e);
+    console.error('Erreur détails:', e.message, e.name);
     return res.status(400).json({ message: e.message });
   }
 }

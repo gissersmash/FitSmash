@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useTranslation } from '../hooks/useTranslation';
 import { updateProfile } from '../services/authService';
+import { setToken } from '../services/api';
 import styles from '../styles/Parametres.module.css';
 
 export default function Parametres() {
@@ -13,6 +14,14 @@ export default function Parametres() {
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'fr');
   const [activeTab, setActiveTab] = useState('profile');
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+
+  useEffect(() => {
+    // Configure le token pour les requêtes API
+    const token = localStorage.getItem('token');
+    if (token) {
+      setToken(token);
+    }
+  }, []);
 
   useEffect(() => {
     // Load dark mode preference on component mount
@@ -38,17 +47,43 @@ export default function Parametres() {
 
   const handleSaveProfile = async () => {
     try {
+      // Validation locale
+      if (!newName || newName.trim().length < 3) {
+        showNotification('Le nom doit contenir au moins 3 caractères', 'error');
+        return;
+      }
+
+      // Vérifier que le token existe
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showNotification('Session expirée, veuillez vous reconnecter', 'error');
+        return;
+      }
+
+      console.log('Envoi des données:', { 
+        username: newName.trim(), 
+        avatarLength: newAvatar ? newAvatar.length : 0 
+      });
+
       // Sauvegarder sur le backend
-      await updateProfile({ username: newName, avatar: newAvatar });
+      const response = await updateProfile({ username: newName.trim(), avatar: newAvatar });
       
-      // Mettre à jour le localStorage
-      const updatedUser = { ...user, name: newName, avatar: newAvatar };
+      console.log('Réponse du serveur:', response.data);
+
+      // Mettre à jour le localStorage avec les données du backend
+      const updatedUser = { 
+        ...user, 
+        name: response.data.user.username, 
+        avatar: response.data.user.avatar 
+      };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
       showNotification(t('settings.profileUpdated'));
     } catch (error) {
       console.error('Erreur lors de la sauvegarde du profil:', error);
-      showNotification(t('settings.errorSaving') || 'Erreur lors de la sauvegarde', 'error');
+      console.error('Détails erreur:', error.response?.data);
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de la sauvegarde';
+      showNotification(errorMessage, 'error');
     }
   };
 
