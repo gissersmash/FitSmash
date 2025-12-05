@@ -196,8 +196,8 @@ export default function Contact() {
                   <i className="bi bi-clock-fill"></i>
                 </div>
                 <div>
-                  <strong>Heures d'ouverture</strong>
-                  <p>Lun - Ven : 9h00 - 18h00<br />Sam - Dim : 10h00 - 16h00</p>
+                  <strong>Disponibilité du service</strong>
+                  <p>Service disponible 24h/24 et 7j/7<br />Support client : Lun - Ven : 9h00 - 18h00</p>
                 </div>
               </div>
 
@@ -236,13 +236,13 @@ export default function Contact() {
               <h4 className={contactStyles.socialTitle}>Suivez-nous</h4>
               <div className={contactStyles.socialIcons}>
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className={`${contactStyles.socialLink} ${contactStyles.socialFacebook}`}>
-                  <img src="/images/facebook.png" alt="Facebook" style={{ width: '50px', height: '50px' }} />
+                  <img src={`${process.env.PUBLIC_URL}/images/facebook.png`} alt="Facebook" style={{ width: '50px', height: '50px' }} />
                 </a>
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className={`${contactStyles.socialLink} ${contactStyles.socialTwitter}`}>
-                  <img src="/images/X.png" alt="X (Twitter)" style={{ width: '45px', height: '45px' }} />
+                  <img src={`${process.env.PUBLIC_URL}/images/X.png`} alt="X (Twitter)" style={{ width: '45px', height: '45px' }} />
                 </a>
                 <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={`${contactStyles.socialLink} ${contactStyles.socialInstagram}`}>
-                  <img src="/images/Instagram_icon.png" alt="Instagram" style={{ width: '50px', height: '50px' }} />
+                  <img src={`${process.env.PUBLIC_URL}/images/Instagram_icon.png`} alt="Instagram" style={{ width: '50px', height: '50px' }} />
                 </a>
               </div>
             </div>
