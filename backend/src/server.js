@@ -25,7 +25,6 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 app.options(/.*/, cors());
 app.use(express.json());

@@ -142,6 +142,9 @@ export default function Dashboard() {
   };
 
   const totalCalories = foodEntries.reduce((sum, f) => sum + (Number(f.calories) || 0), 0);
+  const totalProteins = foodEntries.reduce((sum, f) => sum + (Number(f.proteins) || 0), 0);
+  const totalCarbs = foodEntries.reduce((sum, f) => sum + (Number(f.carbs) || 0), 0);
+  const totalFats = foodEntries.reduce((sum, f) => sum + (Number(f.fats) || 0), 0);
   const caloriesBurned = activities.reduce((sum, a) => sum + (a.calories_burned || 0), 0);
   const netCalories = totalCalories - caloriesBurned;
   const caloriesRestantes = objectif - netCalories;
@@ -169,7 +172,7 @@ export default function Dashboard() {
             <div>
               <h2 className={styles.heroTitle}>Bienvenue, {username}</h2>
               <p className={styles.heroSubtitle}>
-                📅 {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                 <span style={{ margin: '0 12px', opacity: 0.5 }}>•</span>
                 Suivez vos calories et atteignez vos objectifs santé
               </p>
@@ -204,7 +207,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <h5 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
-                  🔥 Nouveau : Suivez vos activités physiques !
+                  Nouveau : Suivez vos activités physiques !
                 </h5>
                 <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                   Enregistrez vos sports et calculez automatiquement les calories brûlées
@@ -315,8 +318,8 @@ export default function Dashboard() {
           <div className={styles.progressCard}>
             <div className={styles.progressHeader}>
               <h5 className={styles.progressTitle}>Progression du jour</h5>
-              <span className={`${styles.progressBadge} ${pct >= 100 ? styles.progressBadgeDanger : styles.progressBadgeSuccess}`}>
-                {Math.round(pct)}%
+              <span className={`${styles.progressBadge} ${caloriesRestantes <= 0 ? styles.progressBadgeDanger : styles.progressBadgeSuccess}`}>
+                {caloriesRestantes > 0 ? `${Math.round(caloriesRestantes)} kcal restantes` : `Objectif atteint`}
               </span>
             </div>
             <ProgressBar now={pct} style={{ height: 12, borderRadius: 6 }} variant={pct >= 100 ? 'danger' : 'success'} />
@@ -391,7 +394,12 @@ export default function Dashboard() {
           totalCalories={totalCalories}
           objectif={objectif}
           foodEntriesCount={foodEntries.length}
-          pct={pct}
+          caloriesRestantes={caloriesRestantes}
+          caloriesBurned={caloriesBurned}
+          netCalories={netCalories}
+          totalProteins={totalProteins}
+          totalCarbs={totalCarbs}
+          totalFats={totalFats}
         />
       </div>
 
@@ -444,7 +452,7 @@ export default function Dashboard() {
                 <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '48px', color: 'white' }}></i>
               </div>
               <h2 style={{ fontSize: '26px', fontWeight: 'bold', color: '#dc2626', marginBottom: '10px' }}>
-                🔥 Objectif dépassé !
+                Objectif dépassé !
               </h2>
               <p style={{ color: '#666', fontSize: '16px', lineHeight: '1.6', marginBottom: '20px' }}>
                 Vous avez dépassé votre objectif calorique quotidien de <strong style={{ color: '#dc2626' }}>{calorieOverage} kcal</strong>

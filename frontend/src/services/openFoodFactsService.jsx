@@ -15,6 +15,8 @@ export const searchOpenFoodFacts = async (query) => {
   }
 };
 
-export default {
+const openFoodFactsService = {
   searchOpenFoodFacts
 };
+
+export default openFoodFactsService;

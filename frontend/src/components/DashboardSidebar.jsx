@@ -1,6 +1,6 @@
 import { Carousel } from "react-bootstrap";
 
-export default function DashboardSidebar({ totalCalories, objectif, foodEntriesCount, pct }) {
+export default function DashboardSidebar({ totalCalories, objectif, foodEntriesCount, caloriesRestantes, caloriesBurned, netCalories, totalProteins, totalCarbs, totalFats }) {
   const today = new Date();
   const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
   
@@ -37,9 +37,12 @@ export default function DashboardSidebar({ totalCalories, objectif, foodEntriesC
             padding: '12px 16px',
             backdropFilter: 'blur(10px)'
           }}>
-            <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>Calories consommées</div>
+            <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>Calories nettes</div>
             <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              {totalCalories} <span style={{ fontSize: '14px', fontWeight: 'normal' }}>/ {objectif}</span>
+              {netCalories} <span style={{ fontSize: '14px', fontWeight: 'normal' }}>kcal</span>
+            </div>
+            <div style={{ fontSize: '11px', opacity: 0.8, marginTop: '4px' }}>
+              {totalCalories} consommées - {Math.round(caloriesBurned)} brûlées
             </div>
           </div>
           <div style={{
@@ -48,8 +51,8 @@ export default function DashboardSidebar({ totalCalories, objectif, foodEntriesC
             padding: '12px 16px',
             backdropFilter: 'blur(10px)'
           }}>
-            <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>Aliments enregistrés</div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{foodEntriesCount}</div>
+            <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>Protéines</div>
+            <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{Math.round(totalProteins)}g</div>
           </div>
           <div style={{
             background: 'rgba(255,255,255,0.15)',
@@ -57,8 +60,8 @@ export default function DashboardSidebar({ totalCalories, objectif, foodEntriesC
             padding: '12px 16px',
             backdropFilter: 'blur(10px)'
           }}>
-            <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>Progression</div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{Math.round(pct)}%</div>
+            <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>Glucides</div>
+            <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{Math.round(totalCarbs)}g</div>
           </div>
         </div>
       </div>
