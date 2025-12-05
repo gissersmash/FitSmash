@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useTranslation } from '../hooks/useTranslation';
+import { updateProfile } from '../services/authService';
 import styles from '../styles/Parametres.module.css';
 
 export default function Parametres() {
@@ -35,11 +36,20 @@ export default function Parametres() {
     setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
   };
 
-  const handleSaveProfile = () => {
-    const updatedUser = { ...user, name: newName, avatar: newAvatar };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    showNotification(t('settings.profileUpdated'));
+  const handleSaveProfile = async () => {
+    try {
+      // Sauvegarder sur le backend
+      await updateProfile({ username: newName, avatar: newAvatar });
+      
+      // Mettre à jour le localStorage
+      const updatedUser = { ...user, name: newName, avatar: newAvatar };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      showNotification(t('settings.profileUpdated'));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde du profil:', error);
+      showNotification(t('settings.errorSaving') || 'Erreur lors de la sauvegarde', 'error');
+    }
   };
 
   const handleToggleDarkMode = () => {
